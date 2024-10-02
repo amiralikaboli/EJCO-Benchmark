@@ -32,6 +32,11 @@ class Record(RecordSpecs):
     time: tuple[float, ...]
 
 
+class RecordMean(BaseModel):
+    query: str
+    time: float
+
+
 SPECS_FIELDS: Final[set[str]] = set(RecordSpecs.model_fields.keys())
 SpecsGJ = RecordSpecs(vectorize=1, optimize=0, strategy=BuildStrategy.Full)
 SpecsScalarFJ = RecordSpecs(vectorize=1, optimize=1, strategy=BuildStrategy.COLT)
@@ -64,19 +69,15 @@ def mapper(func: Callable[[Record], T]) -> Callable[[list[Record]], list[T]]:
     return wrapper
 
 
-def mean_ms(record: Record) -> Record:
-    return Record(
-        **record.model_dump(exclude={"time"}),
-        time=(round(SECS_TO_MS * mean(record.time)),),
-    )
+def mean_ms(record: Record) -> RecordMean:
+    return RecordMean(query=record.query, time=round(SECS_TO_MS * mean(record.time)))
 
 
-def to_series(record: Record) -> pd.Series:
-    (t,) = record.time
-    return pd.Series(record.model_dump(exclude=SPECS_FIELDS | {"time"}) | dict(time=t))
+def to_series(record: RecordMean) -> pd.Series:
+    return pd.Series(record.model_dump())
 
 
-def to_frame(records: list[Record]) -> pd.DataFrame:
+def to_frame(records: list[RecordMean]) -> pd.DataFrame:
     df = pd.DataFrame(to_series(record) for record in records)
     df["time"] = df["time"].astype(int)
     return df.rename(columns={"query": QUERY_COL, "time": RUNTIME_COL})

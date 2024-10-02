@@ -15,18 +15,23 @@ def plot(algo: Algo, vectorised: bool = False) -> None:
         else (vector_fj if vectorised else scalar_fj)
     )
     ours = read_wcoj_results(algo=algo)
+    df = merge(baseline=baseline, ours=ours)
+    geometric_mean = round(statistics.geometric_mean(df["Performance Improvement"]), 2)
+    print("Geometric Mean", geometric_mean)
+    print()
+    print(df)
+    _plot(df, algo, vectorised)
+
+
+def merge(baseline: pd.DataFrame, ours: pd.DataFrame) -> pd.DataFrame:
     df = pd.merge(
         baseline, ours, how="outer", on="Query", suffixes=(" baseline", " ours")
     ).set_index("Query")
     df["Performance Improvement"] = (df[df.columns[0]] / df[df.columns[1]]).round(2)
-    geometric_mean = round(statistics.geometric_mean(df["Performance Improvement"]), 2)
-    print("Geometric Mean", geometric_mean)
-    print()
-    print(df.sort_values(by=df.columns[2], ascending=False))
-    plot_(df, algo, vectorised)
+    return df.sort_values(by=df.columns[2], ascending=False)
 
 
-def plot_(df: pd.DataFrame, algo: Algo, vectorised: bool) -> None:
+def _plot(df: pd.DataFrame, algo: Algo, vectorised: bool) -> None:
     plt.plot(df[df.columns[0]], df[df.columns[0]], color="gray")
     plt.scatter(df[df.columns[0]], df[df.columns[1]], color="black", s=5)
     plt.xscale("log")
