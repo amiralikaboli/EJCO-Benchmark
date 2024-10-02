@@ -1,3 +1,5 @@
+import statistics
+
 import matplotlib.pyplot as plt
 import pandas as pd
 
@@ -14,14 +16,13 @@ def plot(algo: Algo, vectorised: bool = False) -> None:
     )
     ours = read_wcoj_results(algo=algo)
     df = pd.merge(
-        baseline, ours, how="outer", on="Query", suffixes=(" expected", " actual")
+        baseline, ours, how="outer", on="Query", suffixes=(" baseline", " ours")
     ).set_index("Query")
-    df["Diff (ms)"] = df[df.columns[1]] - df[df.columns[0]]
-    df["Diff (%)"] = (100 * df["Diff (ms)"] / df[df.columns[0]]).round().astype(int)
-    pct_diff_summary = pd.DataFrame(df[df.columns[3]].describe().round().astype(int)).T
-    print(pct_diff_summary)
+    df["Performance Improvement"] = (df[df.columns[0]] / df[df.columns[1]]).round(2)
+    geometric_mean = round(statistics.geometric_mean(df["Performance Improvement"]), 2)
+    print("Geometric Mean", geometric_mean)
     print()
-    print(df.sort_values(by=df.columns[3], ascending=False))
+    print(df.sort_values(by=df.columns[2], ascending=False))
     plot_(df, algo, vectorised)
 
 
