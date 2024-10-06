@@ -13,12 +13,12 @@ ABLATIONS: Final[list[int]] = sorted(
         (f.name for f in os.scandir(ABLATIONS_DIR) if f.is_dir()),
     )
 )
-MAX_ABLATION: Final[int] = max(ABLATIONS)
+NO_ABLATION: Final[int] = max(ABLATIONS)
 
 
 def apply_ablation(ablation: int) -> None:
     copy_ablation(ablation)
-    if not check_progs_diffs() == (ablation != MAX_ABLATION):
+    if not check_progs_diffs() == (ablation != NO_ABLATION):
         raise RuntimeError("sdql/progs unexpected git diff status")
 
 

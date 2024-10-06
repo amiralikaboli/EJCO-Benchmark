@@ -1,4 +1,5 @@
 import os
+from enum import Enum
 from typing import Final
 
 SECS_TO_MS: Final[int] = 1_000
@@ -15,3 +16,8 @@ PROGS_SYM: Final[str] = os.path.join(ROOT_DIR, "progs")
 PROGS_DIR: Final[str] = os.path.realpath(PROGS_SYM)
 GJ_DIR: Final[str] = os.path.join(PROGS_DIR, "job", "gj")
 FJ_DIR: Final[str] = os.path.join(PROGS_DIR, "job", "fj")
+
+
+class Algo(Enum):
+    FJ = "fj"
+    GJ = "gj"

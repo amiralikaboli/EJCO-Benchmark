@@ -1,14 +1,13 @@
 import os
 import re
 import subprocess
-from enum import Enum
 from pathlib import Path
 from typing import Any, Final
 
 import pandas as pd
 
-from helpers.ablations import apply_ablation
-from helpers.constants import QUERY_COL, RUNTIME_COL, SCRIPTS_DIR, TIMINGS_DIR
+from helpers.ablations import NO_ABLATION, apply_ablation
+from helpers.constants import Algo, QUERY_COL, RUNTIME_COL, SCRIPTS_DIR, TIMINGS_DIR
 
 WCOJ_DIR: Final[str] = os.path.abspath(os.path.join(TIMINGS_DIR, "wcoj"))
 
@@ -17,25 +16,23 @@ RE_RUNTIME: Final[re.Pattern] = re.compile(r"(\d+\.?\d*]?) ms")
 DTYPES: Final[dict[str, Any]] = {QUERY_COL: "string", RUNTIME_COL: int}
 
 
-class Algo(Enum):
-    FJ = "fj"
-    GJ = "gj"
-
-
-def read_wcoj_results(algo: Algo, ablation: int | None = None) -> pd.DataFrame:
-    if algo == Algo.GJ and ablation is not None:
+def read_wcoj_result(algo: Algo, ablation: int = NO_ABLATION) -> pd.DataFrame:
+    if algo == Algo.GJ and ablation != NO_ABLATION:
         raise ValueError("Ablation not supported for GJ")
 
-    job_data_dir: Final[str] = os.path.join(WCOJ_DIR, f"{algo.value}_results")
-    job_results: Final[str] = os.path.join(WCOJ_DIR, f"{algo.value}_results.csv")
+    job_ablation_dir = os.path.join(WCOJ_DIR, f"O{ablation}")
+    job_data_dir = os.path.join(job_ablation_dir, f"{algo.value}_results")
+    job_results: Final[str] = os.path.join(
+        job_ablation_dir, f"{algo.value}_results.csv"
+    )
 
     if not Path(job_data_dir).is_dir():
-        if ablation is not None:
-            apply_ablation(ablation)
-
+        apply_ablation(ablation)
         subprocess.call(f"./codegen.sh {algo.value} 5", shell=True, cwd=SCRIPTS_DIR)
         subprocess.call(f"./compile.sh {algo.value}", shell=True, cwd=SCRIPTS_DIR)
-        subprocess.call(f"./run.sh {algo.value}", shell=True, cwd=SCRIPTS_DIR)
+        subprocess.call(
+            f"./run.sh {algo.value} {ablation}", shell=True, cwd=SCRIPTS_DIR
+        )
 
     if not Path(job_results).is_file():
         write_results_frame(job_data_dir, job_results)

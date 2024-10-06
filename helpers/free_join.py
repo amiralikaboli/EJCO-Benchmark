@@ -8,7 +8,7 @@ from typing import Callable, Final, TypeVar
 import pandas as pd
 from pydantic import BaseModel
 
-from helpers.constants import QUERY_COL, RUNTIME_COL, SECS_TO_MS, TIMINGS_DIR
+from helpers.constants import Algo, QUERY_COL, RUNTIME_COL, SECS_TO_MS, TIMINGS_DIR
 
 T = TypeVar("T")
 
@@ -98,3 +98,13 @@ def read_free_join_results() -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     categorised = categorise(records, SpecsGJ, SpecsScalarFJ, SpecsVectorFJ)
     gj, scalar_fj, vector_fj = map(lambda x: to_frame(mapper(mean_ms)(x)), categorised)
     return gj, scalar_fj, vector_fj
+
+
+def read_free_join_result(algo: Algo, vectorised: bool = False) -> pd.DataFrame:
+    assert algo == Algo.FJ or not vectorised
+    wcoj_gj, scalar_fj, vector_fj = read_free_join_results()
+    return (
+        wcoj_gj
+        if algo.value == Algo.GJ.value
+        else (vector_fj if vectorised else scalar_fj)
+    )

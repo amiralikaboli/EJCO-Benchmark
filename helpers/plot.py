@@ -3,35 +3,34 @@ import statistics
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from helpers.free_join import read_free_join_results
-from helpers.wcoj import Algo, read_wcoj_results
+from helpers.constants import Algo, QUERY_COL
 
 
-def plot(algo: Algo, vectorised: bool = False) -> None:
-    wcoj_gj, scalar_fj, vector_fj = read_free_join_results()
-    baseline = (
-        wcoj_gj
-        if algo.value == Algo.GJ.value
-        else (vector_fj if vectorised else scalar_fj)
-    )
-    ours = read_wcoj_results(algo=algo)
-    df = merge(baseline=baseline, ours=ours)
+def plot(df: pd.DataFrame, algo: Algo, vectorised: bool = False) -> None:
+    df = build_frame(df, algo, vectorised)
     geometric_mean = round(statistics.geometric_mean(df["Performance Improvement"]), 2)
     print("Geometric Mean", geometric_mean)
     print()
     print(df)
-    _plot(df, algo, vectorised)
+    plot_frame(df, algo, vectorised)
 
 
-def merge(baseline: pd.DataFrame, ours: pd.DataFrame) -> pd.DataFrame:
-    df = pd.merge(
-        baseline, ours, how="outer", on="Query", suffixes=(" baseline", " ours")
-    ).set_index("Query")
-    df["Performance Improvement"] = (df[df.columns[0]] / df[df.columns[1]]).round(2)
-    return df.sort_values(by=df.columns[2], ascending=False)
+def build_frame(df: pd.DataFrame, algo: Algo, vectorised: bool) -> pd.DataFrame:
+    baseline_col, ours_col = get_colnames(algo, vectorised)
+    df = df[[QUERY_COL, baseline_col, ours_col]].set_index(QUERY_COL)
+    df["Performance Improvement"] = (df[baseline_col] / df[ours_col]).round(2)
+    return df.sort_values(by="Performance Improvement", ascending=False)
 
 
-def _plot(df: pd.DataFrame, algo: Algo, vectorised: bool) -> None:
+def get_colnames(algo: Algo, vectorised: bool) -> tuple[str, str]:
+    if algo == Algo.GJ:
+        assert not vectorised
+        return "GJ (free-join)", "GJ"
+    else:
+        return "FJ (vector)" if vectorised else "FJ (scalar)", "FJ"
+
+
+def plot_frame(df: pd.DataFrame, algo: Algo, vectorised: bool) -> None:
     plt.plot(df[df.columns[0]], df[df.columns[0]], color="gray")
     plt.scatter(df[df.columns[0]], df[df.columns[1]], color="black", s=5)
     plt.xscale("log")
