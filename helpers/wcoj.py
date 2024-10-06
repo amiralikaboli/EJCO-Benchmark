@@ -7,7 +7,8 @@ from typing import Any, Final
 
 import pandas as pd
 
-from helpers.constants import TIMINGS_DIR, QUERY_COL, RUNTIME_COL, SCRIPTS_DIR
+from helpers.checks import check_progs_diffs
+from helpers.constants import QUERY_COL, RUNTIME_COL, SCRIPTS_DIR, TIMINGS_DIR
 
 WCOJ_DIR: Final[str] = os.path.abspath(os.path.join(TIMINGS_DIR, "wcoj"))
 
@@ -26,6 +27,9 @@ def read_wcoj_results(algo: Algo) -> pd.DataFrame:
     job_results: Final[str] = os.path.join(WCOJ_DIR, f"{algo.value}_results.csv")
 
     if not Path(job_data_dir).is_dir():
+        if check_progs_diffs():
+            raise ValueError("sdql/progs has git diffs (restore it after ablations)")
+
         subprocess.call(f"./codegen.sh {algo.value} 5", shell=True, cwd=SCRIPTS_DIR)
         subprocess.call(f"./compile.sh {algo.value}", shell=True, cwd=SCRIPTS_DIR)
         subprocess.call(f"./run.sh {algo.value}", shell=True, cwd=SCRIPTS_DIR)

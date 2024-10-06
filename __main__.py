@@ -1,4 +1,4 @@
-from helpers.check_progs import check_progs
+from helpers.checks import check_progs
 from helpers.plot import plot
 from helpers.wcoj import Algo
 
