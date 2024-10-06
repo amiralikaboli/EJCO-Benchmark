@@ -7,7 +7,7 @@ from typing import Any, Final
 
 import pandas as pd
 
-from helpers.checks import check_progs_diffs
+from helpers.ablations import apply_ablation
 from helpers.constants import QUERY_COL, RUNTIME_COL, SCRIPTS_DIR, TIMINGS_DIR
 
 WCOJ_DIR: Final[str] = os.path.abspath(os.path.join(TIMINGS_DIR, "wcoj"))
@@ -22,13 +22,16 @@ class Algo(Enum):
     GJ = "gj"
 
 
-def read_wcoj_results(algo: Algo) -> pd.DataFrame:
+def read_wcoj_results(algo: Algo, ablation: int | None = None) -> pd.DataFrame:
+    if algo == Algo.GJ and ablation is not None:
+        raise ValueError("Ablation not supported for GJ")
+
     job_data_dir: Final[str] = os.path.join(WCOJ_DIR, f"{algo.value}_results")
     job_results: Final[str] = os.path.join(WCOJ_DIR, f"{algo.value}_results.csv")
 
     if not Path(job_data_dir).is_dir():
-        if check_progs_diffs():
-            raise ValueError("sdql/progs has git diffs (restore it after ablations)")
+        if ablation is not None:
+            apply_ablation(ablation)
 
         subprocess.call(f"./codegen.sh {algo.value} 5", shell=True, cwd=SCRIPTS_DIR)
         subprocess.call(f"./compile.sh {algo.value}", shell=True, cwd=SCRIPTS_DIR)

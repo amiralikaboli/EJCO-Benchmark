@@ -1,15 +1,17 @@
 import os
 from typing import Final
 
+SECS_TO_MS: Final[int] = 1_000
+
+QUERY_COL: Final[str] = "Query"
+RUNTIME_COL: Final[str] = "Runtime (ms)"
 
 FILE_DIR: Final[str] = os.path.dirname(os.path.realpath(__file__))
 ROOT_DIR: Final[str] = os.path.abspath(os.path.join(FILE_DIR, ".."))
+ABLATIONS_DIR: Final[str] = os.path.join(ROOT_DIR, "ablations")
 TIMINGS_DIR: Final[str] = os.path.join(ROOT_DIR, "timings")
 SCRIPTS_DIR: Final[str] = os.path.join(ROOT_DIR, "scripts")
 PROGS_SYM: Final[str] = os.path.join(ROOT_DIR, "progs")
 PROGS_DIR: Final[str] = os.path.realpath(PROGS_SYM)
-
-QUERY_COL = "Query"
-RUNTIME_COL = "Runtime (ms)"
-
-SECS_TO_MS: Final[int] = 1_000
+GJ_DIR: Final[str] = os.path.join(PROGS_DIR, "job", "gj")
+FJ_DIR: Final[str] = os.path.join(PROGS_DIR, "job", "fj")
