@@ -41,5 +41,5 @@ sum(<mi_off, _> <- range(mi.size))
 						let x4 = mi.info_type_id(mi_off) in
 						if (x4 ∈ it1_trie0) then
 							let it1_trie1 = it1_trie0(x4) in
-							promote[min_sum](<col5=interm0.col2, col6=interm0.col5>)
+							promote[min_sum](<col5=interm0_tuple.col2, col6=interm0_tuple.col5>)
 

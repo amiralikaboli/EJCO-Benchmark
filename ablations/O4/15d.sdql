@@ -46,5 +46,5 @@ sum(<mi_off, _> <- range(mi.size))
 									if (x0 ∈ at_trie0) then
 										let at_trie1 = at_trie0(x0) in
 										sum(<at_off, _> <- at_trie1)
-											promote[min_sum](<col3=interm0.col2, col6=at.title>)
+											promote[min_sum](<col3=interm0_tuple.col2, col6=at.title(at_off)>)
 

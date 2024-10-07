@@ -92,5 +92,5 @@ sum(<mc2_off, _> <- range(mc2.size))
 			let cn2_trie1 = cn2_trie0(x1) in
 			sum(<cn2_off, _> <- cn2_trie1)
 				sum(<interm5_tuple, _> <- interm5_trie1)
-					promote[min_sum](<col2=cn2.name, col5=interm5.col2, col7=interm5.col5, col9=interm5.col7, col11=interm5.col9, col13=interm5.col11>)
+					promote[min_sum](<col2=cn2.name(cn2_off), col5=interm5_tuple.col2, col7=interm5_tuple.col5, col9=interm5_tuple.col7, col11=interm5_tuple.col9, col13=interm5_tuple.col11>)
 
