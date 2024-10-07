@@ -46,5 +46,5 @@ let interm1_trie0 = sum(<mi_off, _> <- range(mi.size))
 in
 
 sum(<interm1_tuple, _> <- interm1_trie0)
-	promote[min_sum](<col0=interm1.col3, col1=interm1.col4, col2=interm1.col7>)
+	promote[min_sum](<col0=interm1_tuple.col3, col1=interm1_tuple.col4, col2=interm1_tuple.col7>)
 

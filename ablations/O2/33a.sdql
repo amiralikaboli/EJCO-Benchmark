@@ -96,5 +96,5 @@ let interm6_trie0 = sum(<mc2_off, _> <- range(mc2.size))
 in
 
 sum(<interm6_tuple, _> <- interm6_trie0)
-	promote[min_sum](<col0=interm6.col2, col1=interm6.col5, col2=interm6.col7, col3=interm6.col9, col4=interm6.col11, col5=interm6.col13>)
+	promote[min_sum](<col0=interm6_tuple.col2, col1=interm6_tuple.col5, col2=interm6_tuple.col7, col3=interm6_tuple.col9, col4=interm6_tuple.col11, col5=interm6_tuple.col13>)
 
