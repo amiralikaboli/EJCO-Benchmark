@@ -11,19 +11,19 @@ let ci = load[<id: @vec {int -> int}, person_id: @vec {int -> int}, movie_id: @v
 let chn = load[<id: @vec {int -> int}, name: @vec {int -> string}, imdb_index: @vec {int -> string}, imdb_id: @vec {int -> int}, name_pcode_cf: @vec {int -> string}, surname_pcode: @vec {int -> string}, md5sum: @vec {int -> string}, size: int>]("datasets/job/char_name.csv")
 let rt = load[<id: @vec {int -> int}, role: @vec {int -> string}, size: int>]("datasets/job/24b/rt.csv")
 
-let t_trie0 = sum(<i, _> <- range(t.size)) @phmap(t.size) { t.id(i) -> { i -> 1 } } in
+let t_trie0 = sum(<i, _> <- range(t.size)) @phmap(t.size) { t.id(i) ->  { i -> 1 } } in
 let interm0_trie0 = sum(<mk_off, _> <- range(mk.size))
 	let x0 = mk.movie_id(mk_off) in
 	if (x0 ∈ t_trie0) then
 		let t_trie1 = t_trie0(x0) in
 		sum(<t_off, _> <- t_trie1)
-			@phmap(promote[min_sum](1000000) + promote[min_sum](mk.size)) { mk.movie_id(mk_off) -> { <col1=mk.keyword_id(mk_off), col2=t.title(t_off)> -> 1 } }
+			@phmap(promote[min_sum](1000000) + promote[min_sum](mk.size)) { mk.movie_id(mk_off) ->  { <col1=mk.keyword_id(mk_off), col2=t.title(t_off)> -> 1 } }
 in
 
-let mc_trie0 = sum(<i, _> <- range(mc.size)) @phmap(mc.size) { mc.movie_id(i) -> { i -> 1 } } in
-let k_trie0 = sum(<i, _> <- range(k.size)) @phmap(k.size) { k.id(i) -> { i -> 1 } } in
-let it_trie0 = sum(<i, _> <- range(it.size)) @phmap(it.size) { it.id(i) -> { i -> 1 } } in
-let cn_trie0 = sum(<i, _> <- range(cn.size)) @phmap(cn.size) { cn.id(i) -> { i -> 1 } } in
+let mc_trie0 = sum(<i, _> <- range(mc.size)) @phmap(mc.size) { mc.movie_id(i) ->  { i -> 1 } } in
+let k_trie0 = sum(<i, _> <- range(k.size)) @phmap(k.size) { k.id(i) ->  { i -> 1 } } in
+let it_trie0 = sum(<i, _> <- range(it.size)) @phmap(it.size) { it.id(i) ->  { i -> 1 } } in
+let cn_trie0 = sum(<i, _> <- range(cn.size)) @phmap(cn.size) { cn.id(i) ->  { i -> 1 } } in
 let interm1_trie0 = sum(<mi_off, _> <- range(mi.size))
 	let x0 = mi.movie_id(mi_off) in
 	if (x0 ∈ interm0_trie0) then
@@ -41,19 +41,19 @@ let interm1_trie0 = sum(<mi_off, _> <- range(mi.size))
 							let x3 = mc.company_id(mc_off) in
 							if (x3 ∈ cn_trie0) then
 								let cn_trie1 = cn_trie0(x3) in
-								@phmap(promote[min_sum](1000000) + promote[min_sum](mi.size)) { mi.movie_id(mi_off) -> { <col0=mi.movie_id(mi_off), col1=mi.info_type_id(mi_off), col2=interm0_tuple.col1, col3=interm0_tuple.col2, col4=mc.company_id(mc_off)> -> 1 } }
+								@phmap(promote[min_sum](1000000) + promote[min_sum](mi.size)) { mi.movie_id(mi_off) ->  { <col0=mi.movie_id(mi_off), col1=mi.info_type_id(mi_off), col2=interm0_tuple.col1, col3=interm0_tuple.col2, col4=mc.company_id(mc_off)> -> 1 } }
 in
 
-let an_trie0 = sum(<i, _> <- range(an.size)) @phmap(an.size) { an.person_id(i) -> { i -> 1 } } in
+let an_trie0 = sum(<i, _> <- range(an.size)) @phmap(an.size) { an.person_id(i) ->  { i -> 1 } } in
 let interm2_trie0 = sum(<n_off, _> <- range(n.size))
 	let x0 = n.id(n_off) in
 	if (x0 ∈ an_trie0) then
 		let an_trie1 = an_trie0(x0) in
-		@phmap(promote[min_sum](1000000) + promote[min_sum](n.size)) { n.id(n_off) -> { <col1=n.name(n_off)> -> 1 } }
+		@phmap(promote[min_sum](1000000) + promote[min_sum](n.size)) { n.id(n_off) ->  { <col1=n.name(n_off)> -> 1 } }
 in
 
-let rt_trie0 = sum(<i, _> <- range(rt.size)) @phmap(rt.size) { rt.id(i) -> { i -> 1 } } in
-let chn_trie0 = sum(<i, _> <- range(chn.size)) @phmap(chn.size) { chn.id(i) -> { i -> 1 } } in
+let rt_trie0 = sum(<i, _> <- range(rt.size)) @phmap(rt.size) { rt.id(i) ->  { i -> 1 } } in
+let chn_trie0 = sum(<i, _> <- range(chn.size)) @phmap(chn.size) { chn.id(i) ->  { i -> 1 } } in
 let interm3_trie0 = sum(<ci_off, _> <- range(ci.size))
 	let x0 = ci.role_id(ci_off) in
 	if (x0 ∈ rt_trie0) then
@@ -70,9 +70,9 @@ let interm3_trie0 = sum(<ci_off, _> <- range(ci.size))
 					sum(<chn_off, _> <- chn_trie1)
 						sum(<interm2_tuple, _> <- interm2_trie1)
 							sum(<interm1_tuple, _> <- interm1_trie1)
-								{ <col0=ci.person_role_id(ci_off), col1=ci.role_id(ci_off), col2=ci.person_id(ci_off), col3=ci.movie_id(ci_off), col4=chn.name(chn_off), col5=interm2_tuple.col1, col6=interm1_tuple.col1, col7=interm1_tuple.col2, col8=interm1_tuple.col3, col9=interm1_tuple.col4> -> 1 }
+								 { <col0=ci.person_role_id(ci_off), col1=ci.role_id(ci_off), col2=ci.person_id(ci_off), col3=ci.movie_id(ci_off), col4=chn.name(chn_off), col5=interm2_tuple.col1, col6=interm1_tuple.col1, col7=interm1_tuple.col2, col8=interm1_tuple.col3, col9=interm1_tuple.col4> -> 1 }
 in
 
 sum(<interm3_tuple, _> <- interm3_trie0)
-	promote[min_sum](<col0=interm3.col4, col1=interm3.col5, col2=interm3.col8>)
+	promote[min_sum](<col0=interm3_tuple.col4, col1=interm3_tuple.col5, col2=interm3_tuple.col8>)
 

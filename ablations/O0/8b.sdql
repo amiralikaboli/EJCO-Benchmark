@@ -6,18 +6,18 @@ let rt = load[<id: @vec {int -> int}, role: @vec {int -> string}, size: int>]("d
 let t = load[<id: @vec {int -> int}, title: @vec {int -> string}, imdb_index: @vec {int -> string}, kind_id: @vec {int -> int}, production_year: @vec {int -> int}, imdb_id: @vec {int -> string}, phonetic_code: @vec {int -> string}, episode_of_id: @vec {int -> int}, season_nr: @vec {int -> int}, episode_nr: @vec {int -> int}, series_years: @vec {int -> string}, md5sum: @vec {int -> string}, size: int>]("datasets/job/8b/t.csv")
 let an = load[<id: @vec {int -> int}, person_id: @vec {int -> int}, name: @vec {int -> string}, imdb_index: @vec {int -> string}, name_pcode_cf: @vec {int -> string}, name_pcode_nf: @vec {int -> string}, surname_pcode: @vec {int -> string}, md5sum: @vec {int -> string}, size: int>]("datasets/job/aka_name.csv")
 
-let cn_trie0 = sum(<i, _> <- range(cn.size)) @phmap(cn.size) { cn.id(i) -> { i -> 1 } } in
+let cn_trie0 = sum(<i, _> <- range(cn.size)) @phmap(cn.size) { cn.id(i) ->  { i -> 1 } } in
 let interm0_trie0 = sum(<mc_off, _> <- range(mc.size))
 	let x0 = mc.company_id(mc_off) in
 	if (x0 ∈ cn_trie0) then
 		let cn_trie1 = cn_trie0(x0) in
-		@phmap(promote[min_sum](1000000) + promote[min_sum](mc.size)) { mc.movie_id(mc_off) -> { <col0=mc.company_id(mc_off)> -> 1 } }
+		@phmap(promote[min_sum](1000000) + promote[min_sum](mc.size)) { mc.movie_id(mc_off) ->  { <col0=mc.company_id(mc_off)> -> 1 } }
 in
 
-let rt_trie0 = sum(<i, _> <- range(rt.size)) @phmap(rt.size) { rt.id(i) -> { i -> 1 } } in
-let t_trie0 = sum(<i, _> <- range(t.size)) @phmap(t.size) { t.id(i) -> { i -> 1 } } in
-let n_trie0 = sum(<i, _> <- range(n.size)) @phmap(n.size) { n.id(i) -> { i -> 1 } } in
-let an_trie0 = sum(<i, _> <- range(an.size)) @phmap(an.size) { an.person_id(i) -> { i -> 1 } } in
+let rt_trie0 = sum(<i, _> <- range(rt.size)) @phmap(rt.size) { rt.id(i) ->  { i -> 1 } } in
+let t_trie0 = sum(<i, _> <- range(t.size)) @phmap(t.size) { t.id(i) ->  { i -> 1 } } in
+let n_trie0 = sum(<i, _> <- range(n.size)) @phmap(n.size) { n.id(i) ->  { i -> 1 } } in
+let an_trie0 = sum(<i, _> <- range(an.size)) @phmap(an.size) { an.person_id(i) ->  { i -> 1 } } in
 let interm1_trie0 = sum(<ci_off, _> <- range(ci.size))
 	let x0 = ci.role_id(ci_off) in
 	if (x0 ∈ rt_trie0) then
@@ -35,9 +35,9 @@ let interm1_trie0 = sum(<ci_off, _> <- range(ci.size))
 						sum(<interm0_tuple, _> <- interm0_trie1)
 							sum(<t_off, _> <- t_trie1)
 								sum(<an_off, _> <- an_trie1)
-									{ <col0=ci.person_id(ci_off), col1=ci.movie_id(ci_off), col2=ci.role_id(ci_off), col3=interm0_tuple.col0, col4=t.title(t_off), col5=an.name(an_off)> -> 1 }
+									 { <col0=ci.person_id(ci_off), col1=ci.movie_id(ci_off), col2=ci.role_id(ci_off), col3=interm0_tuple.col0, col4=t.title(t_off), col5=an.name(an_off)> -> 1 }
 in
 
 sum(<interm1_tuple, _> <- interm1_trie0)
-	promote[min_sum](<col0=interm1.col4, col1=interm1.col5>)
+	promote[min_sum](<col0=interm1_tuple.col4, col1=interm1_tuple.col5>)
 
