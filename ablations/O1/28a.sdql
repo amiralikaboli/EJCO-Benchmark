@@ -91,5 +91,5 @@ let interm5_trie0 = sum(<mi_off, _> <- range(mi.size))
 in
 
 sum(<interm5_tuple, _> <- interm5_trie0)
-	promote[min_sum](<col0=interm5.col5, col1=interm5.col7, col2=interm5.col9>)
+	promote[min_sum](<col0=interm5_tuple.col5, col1=interm5_tuple.col7, col2=interm5_tuple.col9>)
 
