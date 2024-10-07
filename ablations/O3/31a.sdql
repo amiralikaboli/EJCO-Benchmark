@@ -61,5 +61,5 @@ sum(<ci_off, _> <- range(ci.size))
 			let n_trie1 = n_trie0(x1) in
 			sum(<n_off, _> <- n_trie1)
 				sum(<interm1_tuple, _> <- interm1_trie1)
-					promote[min_sum](<col2=n.name, col4=interm1.col2, col7=interm1.col5, col8=interm1.col6>)
+					promote[min_sum](<col2=n.name(n_off), col4=interm1_tuple.col2, col7=interm1_tuple.col5, col8=interm1_tuple.col6>)
 

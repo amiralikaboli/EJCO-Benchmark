@@ -22,5 +22,5 @@ sum(<mk_off, _> <- range(mk.size))
 					if (x2 ∈ it_trie0) then
 						let it_trie1 = it_trie0(x2) in
 						sum(<t_off, _> <- t_trie1)
-							promote[min_sum](<col2=t.title, col4=mi_idx.info>)
+							promote[min_sum](<col2=t.title(t_off), col4=mi_idx.info(mi_idx_off)>)
 

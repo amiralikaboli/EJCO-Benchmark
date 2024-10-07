@@ -47,5 +47,5 @@ sum(<mi_off, _> <- range(mi.size))
 									if (x5 ∈ cn_trie0) then
 										let cn_trie1 = cn_trie0(x5) in
 										sum(<cn_off, _> <- cn_trie1)
-											promote[min_sum](<col4=interm0.col1, col5=interm0.col3, col8=cn.name>)
+											promote[min_sum](<col4=interm0_tuple.col1, col5=interm0_tuple.col3, col8=cn.name(cn_off)>)
 

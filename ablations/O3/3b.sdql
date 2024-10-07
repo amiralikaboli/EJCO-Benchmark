@@ -21,5 +21,5 @@ sum(<mi_off, _> <- range(mi.size))
 			let x1 = interm0_tuple.col1 in
 			if (x1 ∈ k_trie0) then
 				let k_trie1 = k_trie0(x1) in
-				promote[min_sum](<col2=interm0.col2>)
+				promote[min_sum](<col2=interm0_tuple.col2>)
 

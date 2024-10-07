@@ -52,5 +52,5 @@ sum(<mi_off, _> <- range(mi.size))
 									let cn_trie1 = cn_trie0(x4) in
 									sum(<lt_off, _> <- lt_trie1)
 										sum(<cn_off, _> <- cn_trie1)
-											promote[min_sum](<col3=interm1.col2, col6=lt.link, col7=cn.name>)
+											promote[min_sum](<col3=interm1_tuple.col2, col6=lt.link(lt_off), col7=cn.name(cn_off)>)
 

@@ -26,5 +26,5 @@ sum(<mc_off, _> <- range(mc.size))
 				let x2 = mc.company_type_id(mc_off) in
 				if (x2 ∈ ct_trie0) then
 					let ct_trie1 = ct_trie0(x2) in
-					promote[min_sum](<col2=mc.note, col4=interm0.col1, col5=interm0.col2>)
+					promote[min_sum](<col2=mc.note(mc_off), col4=interm0_tuple.col1, col5=interm0_tuple.col2>)
 

@@ -33,5 +33,5 @@ sum(<mk_off, _> <- range(mk.size))
 				if (x2 ∈ k_trie0) then
 					let k_trie1 = k_trie0(x2) in
 					sum(<lt_off, _> <- lt_trie1)
-						promote[min_sum](<col3=interm0.col1, col5=interm0.col4, col6=lt.link>)
+						promote[min_sum](<col3=interm0_tuple.col1, col5=interm0_tuple.col4, col6=lt.link(lt_off)>)
 

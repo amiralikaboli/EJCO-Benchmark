@@ -34,5 +34,5 @@ sum(<ci_off, _> <- range(ci.size))
 						let t_trie1 = t_trie0(x2) in
 						sum(<t_off, _> <- t_trie1)
 							sum(<an1_off, _> <- an1_trie1)
-								promote[min_sum](<col4=t.title, col5=an1.name>)
+								promote[min_sum](<col4=t.title(t_off), col5=an1.name(an1_off)>)
 

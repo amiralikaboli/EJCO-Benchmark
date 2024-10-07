@@ -41,5 +41,5 @@ sum(<mi_off, _> <- range(mi.size))
 								let x4 = mc.company_id(mc_off) in
 								if (x4 ∈ cn_trie0) then
 									let cn_trie1 = cn_trie0(x4) in
-									promote[min_sum](<col2=mi.info, col4=interm0.col1>)
+									promote[min_sum](<col2=mi.info(mi_off), col4=interm0_tuple.col1>)
 

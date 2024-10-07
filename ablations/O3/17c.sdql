@@ -35,5 +35,5 @@ sum(<ci_off, _> <- range(ci.size))
 		if (x1 ∈ interm0_trie0) then
 			let interm0_trie1 = interm0_trie0(x1) in
 			sum(<n_off, _> <- n_trie1)
-				promote[min_sum](<col2=n.name>)
+				promote[min_sum](<col2=n.name(n_off)>)
 

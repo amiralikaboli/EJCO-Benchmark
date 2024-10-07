@@ -53,5 +53,5 @@ sum(<ci_off, _> <- range(ci.size))
 				if (x2 ∈ n_trie0) then
 					let n_trie1 = n_trie0(x2) in
 					sum(<interm1_tuple, _> <- interm1_trie1)
-						promote[min_sum](<col5=interm1.col3>)
+						promote[min_sum](<col5=interm1_tuple.col3>)
 
