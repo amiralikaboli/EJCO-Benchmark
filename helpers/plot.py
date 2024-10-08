@@ -1,9 +1,12 @@
 import statistics
+from pathlib import Path
 
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
+import seaborn as sns
 
-from helpers.constants import Algo, QUERY_COL
+from helpers.constants import Algo, PLOTS_DIR, QUERY_COL
 
 
 def plot(df: pd.DataFrame, algo: Algo, vectorised: bool = False) -> None:
@@ -31,15 +34,55 @@ def get_colnames(algo: Algo, vectorised: bool) -> tuple[str, str]:
 
 
 def plot_frame(df: pd.DataFrame, algo: Algo, vectorised: bool) -> None:
-    plt.plot(df[df.columns[0]], df[df.columns[0]], color="gray")
-    plt.scatter(df[df.columns[0]], df[df.columns[1]], color="black", s=5)
+    plt.rcParams["font.size"] = 14
+    plt.rcParams["font.family"] = "Times New Roman"
+    plt.rcParams["pdf.fonttype"] = 42
+    plt.rcParams["ps.fonttype"] = 42
+    plt.figure(figsize=(5, 5))
+
+    vec_str = str()
+    if algo == Algo.GJ:
+        legend_str = "Generic Join"
+        xlabel_str = "Free Join's Generic Join"
+    else:
+        legend_str = "Free Join"
+        xlabel_str = "Free Join"
+        vec_str = f" w/{'o' if not vectorised else ''} vectorization"
+
+    x_values = df[df.columns[0]].values
+    y_values = df[df.columns[1]].values
+
+    ratio = 1
+    all_values = np.array(list(x_values) + list(y_values)) / 1000
+    eye_line = [min(all_values) / ratio, max(all_values) * ratio]
+
+    plt.plot(eye_line, eye_line, color="gray")
+    plt.scatter(x_values / 1000, y_values / 1000, color="black", s=10, label=legend_str)
     plt.xscale("log")
     plt.yscale("log")
-    label = (
-        " "
-        if algo.value == Algo.GJ.value
-        else (" with vectorisation " if vectorised else " without vectorisation ")
+    plt.xlabel(f"{xlabel_str}{vec_str} (s)")
+    plt.ylabel(f"Our System (s)")
+    plt.legend()
+    plt.savefig(
+        Path(PLOTS_DIR) / f"{algo.value}-{int(vectorised)}.pdf", bbox_inches="tight"
     )
-    plt.xlabel(f"free-join - {algo.value.upper()}{label}(ms)")
-    plt.ylabel(f"WCOJ - {algo.value.upper()} (ms)")
-    plt.show()
+
+
+def violin_plot(df: pd.DataFrame) -> None:
+    plt.rcParams["font.size"] = 14
+    plt.rcParams["font.family"] = "Times New Roman"
+    plt.rcParams["pdf.fonttype"] = 42
+    plt.rcParams["ps.fonttype"] = 42
+    plt.figure(figsize=(10, 4))
+
+    mat = df[["O0", "O1", "O2", "O3", "O4", "FJ", "FJ (vector)"]].to_numpy()
+    mat = 1 / (mat[:, :-1] / mat[:, -1][:, np.newaxis])
+    dfmat = pd.DataFrame(mat, columns=["Naive", "O1", "O2", "O3", "O4", "O5"])
+
+    sns.violinplot(data=dfmat, color="0.8")
+    sns.stripplot(data=dfmat, jitter=True, zorder=1)
+
+    plt.ylabel("Performance Improvement")
+    plt.grid(axis="y", linestyle="dotted")
+
+    plt.savefig(Path(PLOTS_DIR) / "violin.pdf", bbox_inches="tight")
