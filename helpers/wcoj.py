@@ -7,9 +7,9 @@ from typing import Any, Final
 import pandas as pd
 
 from helpers.ablations import NO_ABLATION, apply_ablation
-from helpers.constants import Algo, QUERY_COL, RUNTIME_COL, SCRIPTS_DIR, TIMINGS_DIR
+from helpers.constants import Algo, JOB_TIMINGS_DIR, QUERY_COL, RUNTIME_COL, SCRIPTS_DIR
 
-WCOJ_DIR: Final[str] = os.path.abspath(os.path.join(TIMINGS_DIR, "wcoj"))
+WCOJ_DIR: Final[str] = os.path.abspath(os.path.join(JOB_TIMINGS_DIR, "wcoj"))
 
 RE_RUNTIME: Final[re.Pattern] = re.compile(r"(\d+\.?\d*]?) ms")
 
@@ -31,7 +31,7 @@ def read_wcoj_result(algo: Algo, ablation: int = NO_ABLATION) -> pd.DataFrame:
         subprocess.call(f"./codegen.sh {algo.value} 5", shell=True, cwd=SCRIPTS_DIR)
         subprocess.call(f"./compile.sh {algo.value}", shell=True, cwd=SCRIPTS_DIR)
         subprocess.call(
-            f"./run.sh {algo.value} {ablation}", shell=True, cwd=SCRIPTS_DIR
+            f"./run.sh {algo.value} job/wcoj/{ablation}", shell=True, cwd=SCRIPTS_DIR
         )
 
     if not Path(job_results).is_file():

@@ -8,11 +8,11 @@ from typing import Callable, Final, TypeVar
 import pandas as pd
 from pydantic import BaseModel
 
-from helpers.constants import Algo, QUERY_COL, RUNTIME_COL, SECS_TO_MS, TIMINGS_DIR
+from helpers.constants import Algo, JOB_TIMINGS_DIR, QUERY_COL, RUNTIME_COL, SECS_TO_MS
 
 T = TypeVar("T")
 
-FREE_JOIN_DIR: Final[str] = os.path.abspath(os.path.join(TIMINGS_DIR, "free-join"))
+FREE_JOIN_DIR: Final[str] = os.path.abspath(os.path.join(JOB_TIMINGS_DIR, "free-join"))
 
 
 class BuildStrategy(Enum):

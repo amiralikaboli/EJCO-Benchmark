@@ -12,5 +12,5 @@ for file in ../progs/job/$1/*.sdql; do
   no_ext="${name%.*}"
   echo $no_ext
   echo "Running $no_ext"
-  ./$no_ext.out | grep --text " ms" > $sdql_benchmark_root/timings/wcoj/O$2/$1_results/$no_ext.result
+  ./$no_ext.out | grep --text " ms" > $sdql_benchmark_root/timings/O$2/$1_results/$no_ext.result
 done

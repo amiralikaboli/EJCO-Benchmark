@@ -5,7 +5,7 @@ import pandas as pd
 
 from helpers.ablations import ABLATIONS, NO_ABLATION
 from helpers.checks import check_progs
-from helpers.constants import Algo, QUERY_COL, RUNTIME_COL, TIMINGS_DIR
+from helpers.constants import Algo, QUERY_COL, RUNTIME_COL, JOB_TIMINGS_DIR
 from helpers.free_join import read_free_join_result
 from helpers.plot import plot, violin_plot, ablation_plot
 from helpers.wcoj import read_wcoj_result
@@ -41,7 +41,7 @@ if __name__ == "__main__":
         (df.rename(columns={RUNTIME_COL: name}) for name, df in zip(names, results)),
     )
     print(df)
-    df.to_csv(Path(TIMINGS_DIR) / "overview.csv", index=False)
+    df.to_csv(Path(JOB_TIMINGS_DIR) / "overview.csv", index=False)
     plot(df, Algo.GJ)
     plot(df, Algo.FJ, vectorised=False)
     plot(df, Algo.FJ, vectorised=True)
