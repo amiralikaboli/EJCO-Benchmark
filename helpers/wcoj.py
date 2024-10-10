@@ -31,7 +31,7 @@ def read_wcoj_result(algo: Algo, ablation: int = NO_ABLATION) -> pd.DataFrame:
         subprocess.call(f"./codegen.sh job/{algo.value} 5", shell=True, cwd=SCRIPTS_DIR)
         subprocess.call(f"./compile.sh job/{algo.value}", shell=True, cwd=SCRIPTS_DIR)
         subprocess.call(
-            f"./run.sh {algo.value} job/wcoj/{ablation}", shell=True, cwd=SCRIPTS_DIR
+            f"./run.sh job O{ablation} {algo.value}", shell=True, cwd=SCRIPTS_DIR
         )
 
     if not Path(job_results).is_file():

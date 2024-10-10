@@ -3,14 +3,15 @@
 cd ..
 export sdql_benchmark_root=$(pwd)
 
-mkdir -p "timings/wcoj/O$2/$1_results"
-echo "*" > "timings/wcoj/O$2/$1_results/.gitignore"
+from_root="timings/$1/wcoj/$2/$3_results"
+mkdir -p $from_root
+echo "*" > "$from_root/.gitignore"
 
 cd "$(realpath progs/)/../generated" || exit
-for file in ../progs/job/$1/*.sdql; do
+for file in ../progs/$1/$3/*.sdql; do
   name=${file##*/}
   no_ext="${name%.*}"
   echo $no_ext
   echo "Running $no_ext"
-  ./$no_ext.out | grep --text " ms" > $sdql_benchmark_root/timings/O$2/$1_results/$no_ext.result
+  ./$no_ext.out | grep --text " ms" > $sdql_benchmark_root/$from_root/$no_ext.result
 done

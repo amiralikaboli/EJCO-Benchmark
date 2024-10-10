@@ -25,6 +25,11 @@ SDQL_ROOT: Final[str] = os.path.abspath(os.path.join(PROGS_DIR, ".."))
 DATASETS_DIR: Final[str] = os.path.realpath(os.path.join(SDQL_ROOT, "datasets"))
 
 
+class Source(Enum):
+    JOB = "JOB"
+    LSQB = "LSQB"
+
+
 class Algo(Enum):
     FJ = "fj"
     GJ = "gj"
