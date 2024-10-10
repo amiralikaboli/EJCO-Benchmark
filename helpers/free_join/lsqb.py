@@ -46,13 +46,7 @@ def get_specs(algo: Algo, vectorised: bool) -> Callable[[float], RecordSpecs]:
         return SpecsScalarFJ
 
 
-# Both generic join and free join were ran for 5 iterations:
-# https://github.com/SIGMOD23p561/free-join/blob/c020bbc7964ba17594299a1910ad6b65eebdf0e0/Makefile#L51
-# For generic join we ran this code:
-# https://github.com/SIGMOD23p561/free-join/blob/c020bbc7964ba17594299a1910ad6b65eebdf0e0/gj/src/main.rs#L106-L114
-# As per https://arxiv.org/abs/2301.10841 – 5.1 Setup:
-# "We therefore implement a Generic Join baseline ourselves,
-#  by modifying Free Join to fully construct all tries, and removing vectorization."
+# Similar setup to JOB queries but ran using https://github.com/remysucre/gj-vs-binary
 def read_lsqb_result(sf: float, algo: Algo, vectorised: bool = False) -> pd.DataFrame:
     assert algo == Algo.FJ or not vectorised
     with open(os.path.join(FREE_JOIN_DIR, "gj.json")) as f:
