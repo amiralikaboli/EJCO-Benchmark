@@ -55,8 +55,6 @@ def categorise(records: list[Record], *specs: RecordSpecs) -> list[list[Record]]
             if compare(record, spec):
                 categorised[i].append(record)
                 break
-        else:
-            raise ValueError(f"Record did not match any specs: {record}")
 
     return categorised
 
@@ -83,6 +81,16 @@ def to_frame(records: list[RecordMean]) -> pd.DataFrame:
     return df.rename(columns={"query": QUERY_COL, "time": RUNTIME_COL})
 
 
+def get_specs(algo: Algo, vectorised: bool) -> RecordSpecs:
+    assert algo == Algo.FJ or not vectorised
+    if algo.value == Algo.GJ.value:
+        return SpecsGJ
+    elif vectorised:
+        return SpecsVectorFJ
+    else:
+        return SpecsScalarFJ
+
+
 # Both generic join and free join were ran for 5 iterations:
 # https://github.com/SIGMOD23p561/free-join/blob/c020bbc7964ba17594299a1910ad6b65eebdf0e0/Makefile#L51
 # For generic join we ran this code:
@@ -90,21 +98,11 @@ def to_frame(records: list[RecordMean]) -> pd.DataFrame:
 # As per https://arxiv.org/abs/2301.10841 – 5.1 Setup:
 # "We therefore implement a Generic Join baseline ourselves,
 #  by modifying Free Join to fully construct all tries, and removing vectorization."
-def read_free_join_results() -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+def read_free_join_result(algo: Algo, vectorised: bool = False) -> pd.DataFrame:
+    assert algo == Algo.FJ or not vectorised
     with open(os.path.join(FREE_JOIN_DIR, "gj.json")) as f:
         data = json.load(f)
 
     records = [Record.model_validate_json(json.dumps(item)) for item in data["gj"]]
-    categorised = categorise(records, SpecsGJ, SpecsScalarFJ, SpecsVectorFJ)
-    gj, scalar_fj, vector_fj = map(lambda x: to_frame(mapper(mean_ms)(x)), categorised)
-    return gj, scalar_fj, vector_fj
-
-
-def read_free_join_result(algo: Algo, vectorised: bool = False) -> pd.DataFrame:
-    assert algo == Algo.FJ or not vectorised
-    wcoj_gj, scalar_fj, vector_fj = read_free_join_results()
-    return (
-        wcoj_gj
-        if algo.value == Algo.GJ.value
-        else (vector_fj if vectorised else scalar_fj)
-    )
+    [categorised] = categorise(records, get_specs(algo, vectorised))
+    return to_frame(mapper(mean_ms)(categorised))
