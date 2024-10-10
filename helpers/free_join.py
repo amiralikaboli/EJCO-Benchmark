@@ -29,7 +29,7 @@ class RecordSpecs(BaseModel):
 
 class Record(RecordSpecs):
     query: str
-    time: tuple[float, ...]
+    time: tuple[float, float, float, float, float]
 
 
 class RecordMean(BaseModel):
