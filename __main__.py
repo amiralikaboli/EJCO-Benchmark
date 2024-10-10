@@ -6,7 +6,7 @@ import pandas as pd
 from helpers.ablations import ABLATIONS, NO_ABLATION
 from helpers.checks import check_progs
 from helpers.constants import Algo, QUERY_COL, RUNTIME_COL, JOB_TIMINGS_DIR
-from helpers.free_join import read_free_join_result
+from helpers.free_join import read_job_result
 from helpers.plot import plot, violin_plot, ablation_plot
 from helpers.wcoj import read_wcoj_result
 
@@ -24,9 +24,9 @@ if __name__ == "__main__":
     )
     results = (
         [
-            read_free_join_result(algo=Algo.GJ),
-            read_free_join_result(algo=Algo.FJ, vectorised=False),
-            read_free_join_result(algo=Algo.FJ, vectorised=True),
+            read_job_result(algo=Algo.GJ),
+            read_job_result(algo=Algo.FJ, vectorised=False),
+            read_job_result(algo=Algo.FJ, vectorised=True),
             read_wcoj_result(algo=Algo.GJ),
         ]
         + [

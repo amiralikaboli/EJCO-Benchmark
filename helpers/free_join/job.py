@@ -1,16 +1,13 @@
 import json
 import os
 from enum import Enum
-from functools import wraps
-from statistics import mean
-from typing import Callable, Final, TypeVar
+from typing import Final
 
 import pandas as pd
 from pydantic import BaseModel
 
-from helpers.constants import Algo, JOB_TIMINGS_DIR, QUERY_COL, RUNTIME_COL, SECS_TO_MS
-
-T = TypeVar("T")
+from helpers.constants import Algo, JOB_TIMINGS_DIR
+from helpers.free_join.shared import categorise, mapper, mean_ms, to_frame
 
 FREE_JOIN_DIR: Final[str] = os.path.abspath(os.path.join(JOB_TIMINGS_DIR, "free-join"))
 
@@ -32,53 +29,10 @@ class Record(RecordSpecs):
     time: tuple[float, float, float, float, float]
 
 
-class RecordMean(BaseModel):
-    query: str
-    time: float
-
-
 SPECS_FIELDS: Final[set[str]] = set(RecordSpecs.model_fields.keys())
 SpecsGJ = RecordSpecs(vectorize=1, optimize=0, strategy=BuildStrategy.Full)
 SpecsScalarFJ = RecordSpecs(vectorize=1, optimize=1, strategy=BuildStrategy.COLT)
 SpecsVectorFJ = RecordSpecs(vectorize=1_000, optimize=1, strategy=BuildStrategy.COLT)
-
-
-def compare(a: RecordSpecs, b: RecordSpecs) -> bool:
-    return a.model_dump(include=SPECS_FIELDS) == b.model_dump(include=SPECS_FIELDS)
-
-
-def categorise(records: list[Record], *specs: RecordSpecs) -> list[list[Record]]:
-    categorised = [[] for _ in specs]
-
-    for record in records:
-        for i, spec in enumerate(specs):
-            if compare(record, spec):
-                categorised[i].append(record)
-                break
-
-    return categorised
-
-
-def mapper(func: Callable[[Record], T]) -> Callable[[list[Record]], list[T]]:
-    @wraps(func)
-    def wrapper(records: list[Record]) -> list[T]:
-        return list(map(func, records))
-
-    return wrapper
-
-
-def mean_ms(record: Record) -> RecordMean:
-    return RecordMean(query=record.query, time=round(SECS_TO_MS * mean(record.time)))
-
-
-def to_series(record: RecordMean) -> pd.Series:
-    return pd.Series(record.model_dump())
-
-
-def to_frame(records: list[RecordMean]) -> pd.DataFrame:
-    df = pd.DataFrame(to_series(record) for record in records)
-    df["time"] = df["time"].astype(int)
-    return df.rename(columns={"query": QUERY_COL, "time": RUNTIME_COL})
 
 
 def get_specs(algo: Algo, vectorised: bool) -> RecordSpecs:
@@ -98,11 +52,11 @@ def get_specs(algo: Algo, vectorised: bool) -> RecordSpecs:
 # As per https://arxiv.org/abs/2301.10841 – 5.1 Setup:
 # "We therefore implement a Generic Join baseline ourselves,
 #  by modifying Free Join to fully construct all tries, and removing vectorization."
-def read_free_join_result(algo: Algo, vectorised: bool = False) -> pd.DataFrame:
+def read_job_result(algo: Algo, vectorised: bool = False) -> pd.DataFrame:
     assert algo == Algo.FJ or not vectorised
     with open(os.path.join(FREE_JOIN_DIR, "gj.json")) as f:
         data = json.load(f)
 
     records = [Record.model_validate_json(json.dumps(item)) for item in data["gj"]]
-    [categorised] = categorise(records, get_specs(algo, vectorised))
+    [categorised] = categorise(SPECS_FIELDS)(records, get_specs(algo, vectorised))
     return to_frame(mapper(mean_ms)(categorised))
