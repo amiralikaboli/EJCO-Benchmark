@@ -1,6 +1,8 @@
+import json
+import os
 from functools import wraps
 from statistics import mean
-from typing import Callable, TypeVar
+from typing import Callable, Type, TypeVar
 
 import pandas as pd
 from pydantic import BaseModel
@@ -15,6 +17,16 @@ T = TypeVar("T")
 class RecordMean(BaseModel):
     query: str
     time: float
+
+
+def read_records(rec_type: Type[RecType]) -> Callable[[str], list[RecType]]:
+    def _read_records(timings_dir: str) -> list[RecType]:
+        with open(os.path.join(timings_dir, "gj.json")) as f:
+            data = json.load(f)
+
+        return [rec_type.model_validate_json(json.dumps(item)) for item in data["gj"]]
+
+    return _read_records
 
 
 def compare(specs_fields: set[str]) -> Callable[[RecSpecType, RecSpecType], bool]:

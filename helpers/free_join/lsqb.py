@@ -1,4 +1,3 @@
-import json
 import os
 from enum import Enum
 from typing import Callable, Final
@@ -7,7 +6,7 @@ import pandas as pd
 from pydantic import BaseModel
 
 from helpers.constants import Algo, LSQB_TIMINGS_DIR
-from helpers.free_join.shared import categorise, mapper, mean_ms, to_frame
+from helpers.free_join.shared import categorise, mapper, mean_ms, read_records, to_frame
 
 SCALING_FACTORS: Final[tuple[float]] = (0.1, 0.3, 1, 3)
 
@@ -48,10 +47,6 @@ def get_specs(algo: Algo, vectorised: bool) -> Callable[[float], RecordSpecs]:
 
 # Similar setup to JOB queries but ran using https://github.com/remysucre/gj-vs-binary
 def read_lsqb_result(sf: float, algo: Algo, vectorised: bool = False) -> pd.DataFrame:
-    assert algo == Algo.FJ or not vectorised
-    with open(os.path.join(FREE_JOIN_DIR, "gj.json")) as f:
-        data = json.load(f)
-
-    records = [Record.model_validate_json(json.dumps(item)) for item in data["gj"]]
+    records = read_records(Record)(FREE_JOIN_DIR)
     [categorised] = categorise(SPECS_FIELDS)(records, get_specs(algo, vectorised)(sf))
     return to_frame(mapper(mean_ms)(categorised))
