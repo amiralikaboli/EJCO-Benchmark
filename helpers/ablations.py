@@ -4,7 +4,7 @@ import subprocess
 from typing import Final
 
 from helpers.checks import check_progs_diffs
-from helpers.constants import ABLATIONS_DIR, FJ_DIR, ROOT_DIR
+from helpers.constants import ABLATIONS_DIR, JOB_FJ_DIR, ROOT_DIR
 
 RE_ABLATION: Final[re.Pattern] = re.compile(r"^O(\d+)$")
 ABLATIONS: Final[list[int]] = sorted(
@@ -23,5 +23,5 @@ def apply_ablation(ablation: int) -> None:
 
 
 def copy_ablation(ablation: int) -> None:
-    bash = f"cp ablations/O{ablation}/*.sdql {FJ_DIR}"
+    bash = f"cp ablations/O{ablation}/*.sdql {JOB_FJ_DIR}"
     subprocess.call(bash, shell=True, cwd=ROOT_DIR)

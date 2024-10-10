@@ -8,8 +8,6 @@ from pydantic import BaseModel
 from helpers.constants import Algo, LSQB_TIMINGS_DIR
 from helpers.free_join.shared import categorise, mapper, mean_ms, read_records, to_frame
 
-SCALING_FACTORS: Final[tuple[float]] = (0.1, 0.3, 1, 3)
-
 FREE_JOIN_DIR: Final[str] = os.path.abspath(os.path.join(LSQB_TIMINGS_DIR, "free-join"))
 
 
