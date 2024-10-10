@@ -2,13 +2,13 @@
 
 cd "$(realpath ../progs/)/../generated" || exit
 
-for file in ../progs/job/$1/*.sdql; do
+for file in ../progs/$1/*.sdql; do
   name=${file##*/}
   no_ext="${name%.*}"
   rm -f no_ext.out
 done
 
-for file in ../progs/job/$1/*.sdql; do
+for file in ../progs/$1/*.sdql; do
   name=${file##*/}
   no_ext="${name%.*}"
   echo "Compiling $no_ext"
