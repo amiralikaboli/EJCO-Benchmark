@@ -13,16 +13,17 @@ from helpers.constants import (
     LSQB_TIMINGS_DIR,
     QUERY_COL,
     RUNTIME_COL,
+    SF_COL,
     Source,
 )
 from helpers.plot import ablation_plot, plot, violin_plot
-from helpers.scaling_factors import SCALING_FACTORS, sf_dir_fmt
+from helpers.scaling_factors import SCALING_FACTORS
 
 # CHANGE THIS HERE
 SOURCE = Source.LSQB
 
 
-def job_plots():
+def job_plots() -> None:
     names = (
         [
             "GJ (free-join)",
@@ -57,9 +58,19 @@ def job_plots():
     ablation_plot(df, ["9d", "12b", "16b", "19d"])
 
 
-def lsqb_overview(sf: float):
-    sf_dir = sf_dir_fmt(sf)
-    print(f"SF={sf}")
+def lsqb_plots() -> None:
+    dfs = [lsqb_overviews(sf) for sf in SCALING_FACTORS]
+    df = (
+        pd.concat(dfs, keys=SCALING_FACTORS, names=[SF_COL, QUERY_COL])
+        .swaplevel(SF_COL, QUERY_COL)
+        .sort_index()
+    )
+    print(df)
+    df.to_csv(Path(LSQB_TIMINGS_DIR) / "overview.csv", index=True)
+    # TODO plots
+
+
+def lsqb_overviews(sf: float) -> pd.DataFrame:
     names = [
         "GJ (free-join)",
         "FJ (scalar)",
@@ -74,12 +85,7 @@ def lsqb_overview(sf: float):
         wcoj.read_lsqb_result(algo=Algo.GJ, sf=sf),
         wcoj.read_lsqb_result(algo=Algo.FJ, sf=sf),
     ]
-    df = join_frames(names, results)
-    print(df)
-    df.to_csv(Path(LSQB_TIMINGS_DIR) / f"overview_{sf_dir}.csv", index=False)
-    plot(df, Algo.GJ)
-    plot(df, Algo.FJ, vectorised=False)
-    plot(df, Algo.FJ, vectorised=True)
+    return join_frames(names, results).set_index(QUERY_COL)
 
 
 def join_frames(names: Iterable[str], frames: Iterable[pd.DataFrame]) -> pd.DataFrame:
@@ -95,7 +101,6 @@ if __name__ == "__main__":
         case Source.JOB:
             job_plots()
         case Source.LSQB:
-            for sf in SCALING_FACTORS:
-                lsqb_overview(sf)
+            lsqb_plots()
         case _:
             raise ValueError(f"Unknown source: {SOURCE}")

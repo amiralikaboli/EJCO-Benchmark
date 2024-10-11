@@ -66,7 +66,8 @@ def plot_frame(df: pd.DataFrame, algo: Algo, vectorised: bool) -> None:
     plt.ylim(eye_line)
     plt.legend()
     plt.savefig(
-        Path(PLOTS_DIR) / f"{algo.value}_w{'o' if not vectorised else ''}.pdf", bbox_inches="tight"
+        Path(PLOTS_DIR) / f"{algo.value}_w{'o' if not vectorised else ''}.pdf",
+        bbox_inches="tight",
     )
 
 
@@ -105,7 +106,7 @@ def ablation_plot(tdf: pd.DataFrame, queries: List[str]) -> None:
         ncol=7,
         bbox_to_anchor=(0.5, 1.1),
         frameon=False,
-        prop={"size": 12}
+        prop={"size": 12},
     )
     plt.setp(axes[0], ylabel="Runtime (s)")
     plt.tight_layout()

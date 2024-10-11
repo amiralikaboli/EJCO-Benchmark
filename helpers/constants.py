@@ -6,6 +6,7 @@ SECS_TO_MS: Final[int] = 1_000
 
 QUERY_COL: Final[str] = "Query"
 RUNTIME_COL: Final[str] = "Runtime (ms)"
+SF_COL: Final[str] = "SF"
 
 FILE_DIR: Final[str] = os.path.dirname(os.path.realpath(__file__))
 ROOT_DIR: Final[str] = os.path.abspath(os.path.join(FILE_DIR, ".."))
