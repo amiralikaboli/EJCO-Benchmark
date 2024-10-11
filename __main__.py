@@ -16,7 +16,7 @@ from helpers.constants import (
     SF_COL,
     Source,
 )
-from helpers.plot import ablation_plot, job_plot, lsqb_plot, violin_plot
+from helpers.plots import ablation_plot, job_plot, lsqb_plot, violin_plot
 from helpers.scaling_factors import SCALING_FACTORS
 
 # TOGGLE THIS HERE TO PRODUCE THE DESIRED PLOTS
