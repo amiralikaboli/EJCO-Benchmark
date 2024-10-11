@@ -6,6 +6,8 @@ from typing import Final
 
 from helpers.constants import DATASETS_DIR
 
+SCALING_FACTORS: Final[tuple[float, ...]] = (0.1, 0.3, 1, 3)
+
 LSQB_DATASETS_DIR: Final[str] = "lsqb_no_headers"  # replace this directory or set it up
 LSQB_DATASETS_PATH: Final[Path] = Path(DATASETS_DIR) / LSQB_DATASETS_DIR
 

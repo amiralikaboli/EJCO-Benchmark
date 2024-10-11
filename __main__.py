@@ -4,6 +4,7 @@ from typing import Iterable
 
 import pandas as pd
 
+from helpers import free_join, wcoj
 from helpers.ablations import ABLATIONS, NO_ABLATION
 from helpers.checks import check_progs
 from helpers.constants import (
@@ -12,15 +13,10 @@ from helpers.constants import (
     LSQB_TIMINGS_DIR,
     QUERY_COL,
     RUNTIME_COL,
-    SCALING_FACTORS,
     Source,
 )
-from helpers.free_join import read_job_result
-from helpers.free_join import read_lsqb_result as free_join_lsqb_result
 from helpers.plot import ablation_plot, plot, violin_plot
-from helpers.scaling_factors import sf_dir_fmt
-from helpers.wcoj import read_wcoj_result
-from helpers.wcoj_lsqb import read_lsqb_result as wcoj_read_lsqb_result
+from helpers.scaling_factors import SCALING_FACTORS, sf_dir_fmt
 
 # CHANGE THIS HERE
 SOURCE = Source.LSQB
@@ -39,17 +35,17 @@ def job_plots():
     )
     results = (
         [
-            read_job_result(algo=Algo.GJ),
-            read_job_result(algo=Algo.FJ, vectorised=False),
-            read_job_result(algo=Algo.FJ, vectorised=True),
-            read_wcoj_result(algo=Algo.GJ),
+            free_join.read_job_result(algo=Algo.GJ),
+            free_join.read_job_result(algo=Algo.FJ, vectorised=False),
+            free_join.read_job_result(algo=Algo.FJ, vectorised=True),
+            wcoj.read_job_result(algo=Algo.GJ),
         ]
         + [
-            read_wcoj_result(algo=Algo.FJ, ablation=ablation)
+            wcoj.read_job_result(algo=Algo.FJ, ablation=ablation)
             for ablation in ABLATIONS
             if ablation != NO_ABLATION
         ]
-        + [read_wcoj_result(algo=Algo.FJ, ablation=NO_ABLATION)]
+        + [wcoj.read_job_result(algo=Algo.FJ, ablation=NO_ABLATION)]
     )
     df = join_frames(names, results)
     print(df)
@@ -72,11 +68,11 @@ def lsqb_overview(sf: float):
         "FJ",
     ]
     results = [
-        free_join_lsqb_result(algo=Algo.GJ, sf=sf),
-        free_join_lsqb_result(algo=Algo.FJ, vectorised=False, sf=sf),
-        free_join_lsqb_result(algo=Algo.FJ, vectorised=True, sf=sf),
-        wcoj_read_lsqb_result(algo=Algo.GJ, sf=sf),
-        wcoj_read_lsqb_result(algo=Algo.FJ, sf=sf),
+        free_join.read_lsqb_result(algo=Algo.GJ, sf=sf),
+        free_join.read_lsqb_result(algo=Algo.FJ, vectorised=False, sf=sf),
+        free_join.read_lsqb_result(algo=Algo.FJ, vectorised=True, sf=sf),
+        wcoj.read_lsqb_result(algo=Algo.GJ, sf=sf),
+        wcoj.read_lsqb_result(algo=Algo.FJ, sf=sf),
     ]
     df = join_frames(names, results)
     print(df)

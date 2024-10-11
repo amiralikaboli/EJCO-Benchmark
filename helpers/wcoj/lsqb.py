@@ -5,13 +5,9 @@ from typing import Final
 
 import pandas as pd
 
-from helpers.constants import (
-    Algo,
-    LSQB_TIMINGS_DIR,
-    SCRIPTS_DIR,
-)
+from helpers.constants import Algo, LSQB_TIMINGS_DIR, SCRIPTS_DIR
 from helpers.scaling_factors import link_dataset, sf_dir_fmt, unlink_dataset
-from helpers.wcoj import DTYPES, write_results_frame
+from helpers.wcoj.shared import DTYPES, write_results_frame
 
 WCOJ_DIR: Final[str] = os.path.abspath(os.path.join(LSQB_TIMINGS_DIR, "wcoj"))
 
