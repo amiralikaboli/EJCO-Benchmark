@@ -12,16 +12,28 @@ LSQB_DATASETS_DIR: Final[str] = "lsqb_no_headers"  # replace this directory or s
 LSQB_DATASETS_PATH: Final[Path] = Path(DATASETS_DIR) / LSQB_DATASETS_DIR
 
 
+class DatasetLinking:
+    def __init__(self, sf: float):
+        self.sf = sf
+
+    def __enter__(self):
+        link_dataset(self.sf)
+
+    def __exit__(self, exc_type, exc_value, exc_traceback):
+        unlink_dataset()
+
+
 def link_dataset(sf: float) -> None:
     check_datasets()
     sf_dir = os.path.join(LSQB_DATASETS_DIR, sf_dir_fmt(sf))
     check_dataset(sf_dir)
+    assert not (Path(DATASETS_DIR) / "lsqb").exists()
     bash = f"ln -s {sf_dir} lsqb"
     subprocess.call(bash, shell=True, cwd=DATASETS_DIR)
 
 
 def unlink_dataset() -> None:
-    # TODO check is symlink before deleting
+    assert (Path(DATASETS_DIR) / "lsqb").is_symlink()
     bash = f"rm lsqb"
     subprocess.call(bash, shell=True, cwd=DATASETS_DIR)
 
