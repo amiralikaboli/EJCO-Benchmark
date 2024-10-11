@@ -1,4 +1,4 @@
-import statistics
+from pathlib import Path
 from pathlib import Path
 from typing import Final, List
 
@@ -8,21 +8,13 @@ import pandas as pd
 import seaborn as sns
 
 from helpers.constants import Algo, PLOTS_DIR, QUERY_COL, SECS_TO_MS
-from helpers.plots.shared import FIG_SIZE, RATIO, build_frame, pdf_filename
+from helpers.plots.shared import FIG_SIZE, RATIO, pdf_filename, showing_speedup
 
 JOB_PLOTS_PATH: Final[Path] = Path(PLOTS_DIR) / "job"
 
 
-def job_plot(df: pd.DataFrame, algo: Algo, vectorised: bool = False) -> None:
-    df = build_frame(df, algo, vectorised)
-    geometric_mean = round(statistics.geometric_mean(df["Performance Improvement"]), 2)
-    print("Geometric Mean", geometric_mean)
-    print()
-    print(df)
-    _job_plot(df, algo, vectorised)
-
-
-def _job_plot(df: pd.DataFrame, algo: Algo, vectorised: bool) -> None:
+@showing_speedup
+def job_plot(df: pd.DataFrame, algo: Algo, vectorised: bool) -> None:
     plt.figure(figsize=FIG_SIZE)
 
     if algo == Algo.GJ:

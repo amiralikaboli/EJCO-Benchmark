@@ -1,4 +1,6 @@
-from typing import Final
+import statistics
+from functools import wraps
+from typing import Callable, Final
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -14,6 +16,24 @@ plt.rcParams["pdf.fonttype"] = 42
 plt.rcParams["ps.fonttype"] = 42
 plt.rcParams["axes.spines.right"] = False
 plt.rcParams["axes.spines.top"] = False
+
+
+def showing_speedup(
+    plot: Callable[[pd.DataFrame, Algo, bool], None]
+) -> Callable[[pd.DataFrame, Algo, bool], None]:
+
+    @wraps(plot)
+    def _plot(df: pd.DataFrame, algo: Algo, vectorised: bool = False):
+        df = build_frame(df, algo, vectorised)
+        geometric_mean = round(
+            statistics.geometric_mean(df["Performance Improvement"]), 2
+        )
+        print("Geometric Mean", geometric_mean)
+        print()
+        print(df)
+        plot(df, algo, vectorised)
+
+    return _plot
 
 
 def build_frame(df: pd.DataFrame, algo: Algo, vectorised: bool) -> pd.DataFrame:

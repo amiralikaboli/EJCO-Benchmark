@@ -1,4 +1,3 @@
-import statistics
 from pathlib import Path
 from typing import Final
 
@@ -10,9 +9,9 @@ from helpers.constants import Algo, PLOTS_DIR, QUERY_COL, SECS_TO_MS
 from helpers.plots.shared import (
     FIG_SIZE,
     RATIO,
-    build_frame,
     get_colnames,
     pdf_filename,
+    showing_speedup,
 )
 
 LSQB_PLOTS_PATH: Final[Path] = Path(PLOTS_DIR) / "lsqb"
@@ -37,16 +36,8 @@ LINE_STYLES: Final[dict[str, str]] = {
 }
 
 
+@showing_speedup
 def lsqb_plot(df: pd.DataFrame, algo: Algo, vectorised: bool = False) -> None:
-    df = build_frame(df, algo, vectorised)
-    geometric_mean = round(statistics.geometric_mean(df["Performance Improvement"]), 2)
-    print("Geometric Mean", geometric_mean)
-    print()
-    print(df)
-    _lsqb_plot(df, algo, vectorised)
-
-
-def _lsqb_plot(df: pd.DataFrame, algo: Algo, vectorised: bool = False) -> None:
     plt.figure(figsize=FIG_SIZE)
 
     colnames = list(get_colnames(algo, vectorised))
