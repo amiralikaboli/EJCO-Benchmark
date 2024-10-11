@@ -41,8 +41,12 @@ plt.rcParams["axes.spines.right"] = False
 plt.rcParams["axes.spines.top"] = False
 
 
-# TODO calculate geometric mean and print performance improvement
 def lsqb_plot(df: pd.DataFrame, algo: Algo, vectorised: bool = False) -> None:
+    df = build_frame(df, algo, vectorised)
+    geometric_mean = round(statistics.geometric_mean(df["Performance Improvement"]), 2)
+    print("Geometric Mean", geometric_mean)
+    print()
+    print(df)
     _lsqb_plot(df, algo, vectorised)
 
 
@@ -52,12 +56,9 @@ def _lsqb_plot(df: pd.DataFrame, algo: Algo, vectorised: bool = False) -> None:
     colnames = list(get_colnames(algo, vectorised))
     df = df[colnames]
     df /= SECS_TO_MS
-    print()
-    print(df)
-    print()
     queries = {
         query: df.xs(query, level="Query")
-        for query in df.index.get_level_values(QUERY_COL).unique()
+        for query in sorted(df.index.get_level_values(QUERY_COL).unique())
     }
 
     eye_line = [np.min(df) / RATIO, np.max(df) * RATIO]
@@ -65,6 +66,9 @@ def _lsqb_plot(df: pd.DataFrame, algo: Algo, vectorised: bool = False) -> None:
     for q, q_df in queries.items():
         x_values = q_df.iloc[:, 0]
         y_values = q_df.iloc[:, 1]
+        # sort by y values
+        x_values = [x for _, x in sorted(zip(y_values, x_values))]
+        y_values = [y for y, _ in sorted(zip(y_values, x_values))]
         plt.plot(x_values, y_values, linestyle=LINE_STYLES[q], color="black", label=q)
 
     plt.xscale("log")
@@ -92,7 +96,7 @@ def job_plot(df: pd.DataFrame, algo: Algo, vectorised: bool = False) -> None:
 
 def build_frame(df: pd.DataFrame, algo: Algo, vectorised: bool) -> pd.DataFrame:
     baseline_col, ours_col = get_colnames(algo, vectorised)
-    df = df[[QUERY_COL, baseline_col, ours_col]].set_index(QUERY_COL)
+    df = df[[baseline_col, ours_col]].copy()
     df["Performance Improvement"] = (df[baseline_col] / df[ours_col]).round(2)
     return df.sort_values(by="Performance Improvement", ascending=False)
 
