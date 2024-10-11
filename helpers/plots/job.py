@@ -1,5 +1,4 @@
 from pathlib import Path
-from pathlib import Path
 from typing import Final, List
 
 import matplotlib.pyplot as plt
