@@ -16,14 +16,25 @@ from helpers.constants import (
     SF_COL,
     Source,
 )
-from helpers.plot import ablation_plot, plot, violin_plot
+from helpers.plot import ablation_plot, job_plot, lsqb_plot, violin_plot
 from helpers.scaling_factors import SCALING_FACTORS
 
-# CHANGE THIS HERE
+# TOGGLE THIS HERE TO PRODUCE THE DESIRED PLOTS
 SOURCE = Source.LSQB
 
 
 def job_plots() -> None:
+    df = job_overview()
+    print(df)
+    df.to_csv(Path(JOB_TIMINGS_DIR) / "overview.csv", index=False)
+    job_plot(df, Algo.GJ)
+    job_plot(df, Algo.FJ, vectorised=False)
+    job_plot(df, Algo.FJ, vectorised=True)
+    violin_plot(df)
+    ablation_plot(df, ["9d", "12b", "16b", "19d"])
+
+
+def job_overview() -> pd.DataFrame:
     names = (
         [
             "GJ (free-join)",
@@ -48,26 +59,25 @@ def job_plots() -> None:
         ]
         + [wcoj.read_job_result(algo=Algo.FJ, ablation=NO_ABLATION)]
     )
-    df = join_frames(names, results)
-    print(df)
-    df.to_csv(Path(JOB_TIMINGS_DIR) / "overview.csv", index=False)
-    plot(df, Algo.GJ)
-    plot(df, Algo.FJ, vectorised=False)
-    plot(df, Algo.FJ, vectorised=True)
-    violin_plot(df)
-    ablation_plot(df, ["9d", "12b", "16b", "19d"])
+    return join_frames(names, results)
 
 
 def lsqb_plots() -> None:
+    df = lsqb_overview()
+    print(df)
+    df.to_csv(Path(LSQB_TIMINGS_DIR) / "overview.csv", index=True)
+    lsqb_plot(df, Algo.GJ)
+    lsqb_plot(df, Algo.FJ, vectorised=False)
+    lsqb_plot(df, Algo.FJ, vectorised=True)
+
+
+def lsqb_overview() -> pd.DataFrame:
     dfs = [lsqb_overviews(sf) for sf in SCALING_FACTORS]
-    df = (
+    return (
         pd.concat(dfs, keys=SCALING_FACTORS, names=[SF_COL, QUERY_COL])
         .swaplevel(SF_COL, QUERY_COL)
         .sort_index()
     )
-    print(df)
-    df.to_csv(Path(LSQB_TIMINGS_DIR) / "overview.csv", index=True)
-    # TODO plots
 
 
 def lsqb_overviews(sf: float) -> pd.DataFrame:
