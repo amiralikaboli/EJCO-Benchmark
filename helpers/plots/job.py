@@ -22,6 +22,7 @@ def job_plot(df: pd.DataFrame, algo: Algo, vectorised: bool) -> None:
         legend_str = f"Free Join w/{'o' if not vectorised else ''} vectorization"
 
     df /= SECS_TO_MS
+    df.drop(df.columns[-1], axis=1, inplace=True)
     eye_line = [np.min(df) / RATIO, np.max(df) * RATIO]
     plt.plot(eye_line, eye_line, color="gray")
     x_values = df[df.columns[0]].values
