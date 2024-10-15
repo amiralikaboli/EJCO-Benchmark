@@ -51,7 +51,7 @@ def job_overview() -> pd.DataFrame:
         + [
             wcoj.read_job_result(algo=Algo.FJ, ablation=NO_ABLATION),
             read_job_result_cached(algo=Algo.FJ, dir_name="FJ_SORTING_PURE"),
-            read_job_result_cached(algo=Algo.FJ, dir_name="FJ_SORTING"),
+            read_job_result_cached(algo=Algo.FJ, dir_name="FJ_SORTING_HYBRID"),
         ]
     )
     return join_frames(names, results).set_index(QUERY_COL)
