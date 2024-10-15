@@ -35,3 +35,9 @@ def read_job_result(
         write_results_frame(job_data_dir, job_results)
 
     return pd.read_csv(job_results, dtype=DTYPES)
+
+
+def read_job_result_cached(algo: Algo, dir_name: str) -> pd.DataFrame:
+    dir_path = os.path.join(WCOJ_DIR, dir_name)
+    job_results: Final[str] = os.path.join(dir_path, f"{algo.value}_results.csv")
+    return pd.read_csv(job_results, dtype=DTYPES)

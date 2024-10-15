@@ -3,7 +3,7 @@ from helpers.constants import Source
 from helpers.experiments import job_plots, lsqb_plots
 
 # TOGGLE THIS HERE TO PRODUCE THE DESIRED PLOTS
-SOURCE = Source.LSQB
+SOURCE = Source.JOB
 
 
 if __name__ == "__main__":
