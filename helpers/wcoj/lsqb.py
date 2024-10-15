@@ -12,7 +12,7 @@ from helpers.wcoj.shared import DTYPES, write_results_frame
 WCOJ_DIR: Final[str] = os.path.abspath(os.path.join(LSQB_TIMINGS_DIR, "wcoj"))
 
 
-def read_lsqb_result(algo: Algo, sf: float) -> pd.DataFrame:
+def read_lsqb_result(algo: Algo, sf: float, timeout: int = 0) -> pd.DataFrame:
     sf_dir = sf_dir_fmt(sf)
     lsqb_sf_dir = os.path.join(WCOJ_DIR, sf_dir)
     lsqb_data_dir = os.path.join(lsqb_sf_dir, f"{algo.value}_results")
@@ -26,9 +26,8 @@ def read_lsqb_result(algo: Algo, sf: float) -> pd.DataFrame:
             subprocess.call(
                 f"./compile.sh lsqb/{algo.value}", shell=True, cwd=SCRIPTS_DIR
             )
-            subprocess.call(
-                f"./run.sh lsqb {sf_dir} {algo.value}", shell=True, cwd=SCRIPTS_DIR
-            )
+            run = f"./run.sh {timeout} lsqb {sf_dir} {algo.value}"
+            subprocess.call(run, shell=True, cwd=SCRIPTS_DIR)
 
     if not Path(lsqb_results).is_file():
         write_results_frame(lsqb_data_dir, lsqb_results)
