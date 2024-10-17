@@ -1,16 +1,13 @@
-import os.path
 from pathlib import Path
 from typing import Final, List
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns
 import scipy
-
+import seaborn as sns
 from matplotlib.ticker import MaxNLocator
 
-from helpers.constants import JOB_TIMINGS_DIR
 from helpers.constants import Algo, PLOTS_DIR, QUERY_COL, SECS_TO_MS
 from helpers.plots.shared import FIG_SIZE, RATIO, pdf_filename, showing_speedup
 
@@ -40,11 +37,7 @@ def job_plot(df: pd.DataFrame, algo: Algo, vectorised: bool) -> None:
     plt.ylabel(f"Our System (s)")
     plt.xlim(eye_line)
     plt.ylim(eye_line)
-    plt.legend(
-        loc="upper center",
-        ncol=1,
-        bbox_to_anchor=(0.5, 1.25)
-    )
+    plt.legend(loc="upper center", ncol=1, bbox_to_anchor=(0.5, 1.25))
 
     path = JOB_PLOTS_PATH / f"job_{pdf_filename(algo, vectorised)}"
     plt.savefig(path, bbox_inches="tight")
@@ -58,7 +51,14 @@ def job_fj_plot(df: pd.DataFrame) -> None:
     plt.plot(eye_line, eye_line, color="gray", lw=0.5)
     x_values = df[df.columns[0]].values
     y_values = df[df.columns[2]].values
-    plt.scatter(x_values, y_values, color="lightgray", s=10, label="Free Join w/o vectorization", zorder=3)
+    plt.scatter(
+        x_values,
+        y_values,
+        color="lightgray",
+        s=10,
+        label="Free Join w/o vectorization",
+        zorder=3,
+    )
     x2_values = df[df.columns[1]].values
     plt.scatter(x2_values, y_values, color="black", s=10, label="Free Join", zorder=3)
 
@@ -96,6 +96,8 @@ def violin_plot(df: pd.DataFrame) -> None:
 def ablation_plot(tdf: pd.DataFrame, queries: List[str]) -> None:
     fig, axes = plt.subplots(nrows=2, ncols=2)
     fig.set_size_inches(5, 5)
+    axes = axes.ravel()
+    assert len(queries) == len(axes)
     tdf = tdf.reset_index()
     for query, ax in zip(queries, axes):
         df = tdf[tdf[QUERY_COL] == query]
@@ -154,9 +156,16 @@ def alternatives_plot(tdf: pd.DataFrame, queries: List[str]) -> None:
     tdf = tdf.reset_index()
     for query, ax in zip(queries, axes):
         df = tdf[tdf[QUERY_COL] == query]
-        df = df[[QUERY_COL, "FJ (vector)", "FJ", "FJ sorting (pure)", "FJ sorting (hybrid)"]]
+        df = df[
+            [QUERY_COL, "FJ (vector)", "FJ", "FJ sorting (pure)", "FJ sorting (hybrid)"]
+        ]
         df.columns = [QUERY_COL, "Free Join", "Hash-based", "Sort-based", "Hybrid"]
-        df.plot.bar(ax=ax, legend=None, zorder=3, color=['#e377c2', '#7f7f7f', '#bcbd22', '#17becf'])
+        df.plot.bar(
+            ax=ax,
+            legend=None,
+            zorder=3,
+            color=["#e377c2", "#7f7f7f", "#bcbd22", "#17becf"],
+        )
         lines, labels = ax.get_legend_handles_labels()
         ax.set_xticklabels([query], rotation=0)
         ax.grid(axis="y", linestyle="dotted")
@@ -168,7 +177,7 @@ def alternatives_plot(tdf: pd.DataFrame, queries: List[str]) -> None:
         loc="upper center",
         ncol=2,
         bbox_to_anchor=(0.5, 1.1),
-        frameon=False
+        frameon=False,
     )
     plt.setp(axes[0], ylabel="Runtime (ms)")
     plt.tight_layout()
