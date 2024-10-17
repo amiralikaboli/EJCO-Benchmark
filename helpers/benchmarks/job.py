@@ -7,18 +7,29 @@ from helpers import free_join, wcoj
 from helpers.ablations import ABLATIONS, NO_ABLATION
 from helpers.benchmarks.shared import join_frames
 from helpers.constants import Algo, JOB_TIMINGS_DIR, QUERY_COL
-from helpers.plots import ablation_plot, job_plot, violin_plot
+from helpers.plots import (
+    ablation_plot,
+    alternatives_plot,
+    job_fj_plot,
+    job_plot,
+    job_sorting_plot,
+    violin_plot,
+)
 
 
 def job_plots() -> None:
     df = job_overview()
     print(df)
-    df.to_csv(Path(JOB_TIMINGS_DIR) / "overview.csv", index=False)
+    df.to_csv(Path(JOB_TIMINGS_DIR) / "overview.csv", index=True)
     job_plot(df, Algo.GJ)
     job_plot(df, Algo.FJ, vectorised=False)
     job_plot(df, Algo.FJ, vectorised=True)
+    job_fj_plot(df)
     violin_plot(df)
     ablation_plot(df, ["9d", "12b", "16b", "19d"])
+    job_sorting_plot(df, Algo.SORTING)
+    job_sorting_plot(df, Algo.HYBRID)
+    alternatives_plot(df, ["8a", "12b", "17b", "17f"])
 
 
 def job_overview() -> pd.DataFrame:

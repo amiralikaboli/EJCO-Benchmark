@@ -5,7 +5,7 @@ import pandas as pd
 from helpers import free_join, wcoj
 from helpers.benchmarks.shared import join_frames
 from helpers.constants import Algo, LSQB_TIMINGS_DIR, QUERY_COL, SF_COL
-from helpers.plots import lsqb_plot
+from helpers.plots import lsqb_all_plot, lsqb_plot
 from helpers.scaling_factors import SCALING_FACTORS
 
 
@@ -16,6 +16,7 @@ def lsqb_plots() -> None:
     lsqb_plot(df, Algo.GJ)
     lsqb_plot(df, Algo.FJ, vectorised=False)
     lsqb_plot(df, Algo.FJ, vectorised=True)
+    lsqb_all_plot(df)
 
 
 def lsqb_overview() -> pd.DataFrame:
