@@ -6,38 +6,56 @@ from typing import Final
 import pandas as pd
 
 from helpers.ablations import Ablation, NO_ABLATION, apply_ablation
-from helpers.constants import Algo, JOB_TIMINGS_DIR, SCRIPTS_DIR
+from helpers.constants import (
+    Algo,
+    GENERATED_DIR,
+    JOB_TIMINGS_DIR,
+    ROOT_DIR,
+    SCRIPTS_DIR,
+)
 from helpers.wcoj.shared import DTYPES, write_results_frame
 
 WCOJ_DIR: Final[str] = os.path.abspath(os.path.join(JOB_TIMINGS_DIR, "wcoj"))
 
 
 def read_job_result(
-    algo: Algo, ablation: Ablation = NO_ABLATION, timeout: int = 0
+    algo: Algo, ablation: Ablation = NO_ABLATION, cpp_dir: str = "", timeout: int = 0
 ) -> pd.DataFrame:
-    if algo == Algo.GJ and ablation != NO_ABLATION:
-        raise ValueError("Ablation not supported for GJ")
+    if ablation != NO_ABLATION:
+        if algo == Algo.GJ:
+            raise ValueError("Ablation not supported for GJ")
+        if cpp_dir and ablation != NO_ABLATION:
+            raise ValueError("Skipping C++ codegen is for sorting, not ablations")
 
-    job_ablation_dir = os.path.join(WCOJ_DIR, f"O{ablation}")
-    job_data_dir = os.path.join(job_ablation_dir, f"{algo.value}_results")
-    job_results: Final[str] = os.path.join(
-        job_ablation_dir, f"{algo.value}_results.csv"
-    )
+    data_dir = cpp_dir.replace(os.path.sep, "_").upper() if cpp_dir else f"O{ablation}"
+    data_path = os.path.join(WCOJ_DIR, data_dir)
 
-    if not Path(job_data_dir).is_dir():
-        apply_ablation(ablation)
-        subprocess.call(f"./codegen.sh job/{algo.value} 5", shell=True, cwd=SCRIPTS_DIR)
+    if cpp_dir:
+        results_path = os.path.join(data_path, f"{algo.value}_results")
+        results_csv = os.path.join(data_path, f"{algo.value}_results.csv")
+    else:
+        data_path = os.path.join(WCOJ_DIR, data_dir)
+        results_path = os.path.join(data_path, f"{algo.value}_results")
+        results_csv = os.path.join(data_path, f"{algo.value}_results.csv")
+
+    if not Path(results_path).is_dir():
+        if cpp_dir:
+            copy_cpp(cpp_dir)
+        else:
+            apply_ablation(ablation)
+            subprocess.call(
+                f"./codegen.sh job/{algo.value} 5", shell=True, cwd=SCRIPTS_DIR
+            )
         subprocess.call(f"./compile.sh job/{algo.value}", shell=True, cwd=SCRIPTS_DIR)
-        run = f"./run.sh {timeout} job O{ablation} {algo.value}"
+        run = f"./run.sh {timeout} job {data_dir} {algo.value}"
         subprocess.call(run, shell=True, cwd=SCRIPTS_DIR)
 
-    if not Path(job_results).is_file():
-        write_results_frame(job_data_dir, job_results)
+    if not Path(results_csv).is_file():
+        write_results_frame(results_path, results_csv)
 
-    return pd.read_csv(job_results, dtype=DTYPES)
+    return pd.read_csv(results_csv, dtype=DTYPES)
 
 
-def read_job_result_cached(algo: Algo, dir_name: str) -> pd.DataFrame:
-    dir_path = os.path.join(WCOJ_DIR, dir_name)
-    job_results: Final[str] = os.path.join(dir_path, f"{algo.value}_results.csv")
-    return pd.read_csv(job_results, dtype=DTYPES)
+def copy_cpp(cpp_dir: str) -> None:
+    bash = f"cp -f {cpp_dir}/*.cpp {GENERATED_DIR}"
+    subprocess.call(bash, shell=True, cwd=ROOT_DIR)

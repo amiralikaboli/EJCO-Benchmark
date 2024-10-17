@@ -22,6 +22,7 @@ JOB_GJ_DIR: Final[str] = os.path.join(PROGS_DIR, "job", "gj")
 JOB_FJ_DIR: Final[str] = os.path.join(PROGS_DIR, "job", "fj")
 SDQL_ROOT: Final[str] = os.path.abspath(os.path.join(PROGS_DIR, ".."))
 DATASETS_DIR: Final[str] = os.path.realpath(os.path.join(SDQL_ROOT, "datasets"))
+GENERATED_DIR: Final[str] = os.path.join(SDQL_ROOT, "generated")
 
 
 class Source(Enum):

@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 import pandas as pd
@@ -7,7 +8,6 @@ from helpers.ablations import ABLATIONS, NO_ABLATION
 from helpers.constants import Algo, JOB_TIMINGS_DIR, QUERY_COL
 from helpers.experiments.shared import join_frames
 from helpers.plots import ablation_plot, job_plot, violin_plot
-from helpers.wcoj.job import read_job_result_cached
 
 
 def job_plots() -> None:
@@ -50,8 +50,10 @@ def job_overview() -> pd.DataFrame:
         ]
         + [
             wcoj.read_job_result(algo=Algo.FJ, ablation=NO_ABLATION),
-            read_job_result_cached(algo=Algo.FJ, dir_name="SORTING_PURE"),
-            read_job_result_cached(algo=Algo.FJ, dir_name="SORTING_HYBRID"),
+            wcoj.read_job_result(algo=Algo.FJ, cpp_dir=os.path.join("sorting", "pure")),
+            wcoj.read_job_result(
+                algo=Algo.FJ, cpp_dir=os.path.join("sorting", "hybrid")
+            ),
         ]
     )
     return join_frames(names, results).set_index(QUERY_COL)
