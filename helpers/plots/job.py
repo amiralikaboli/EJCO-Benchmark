@@ -9,7 +9,7 @@ import seaborn as sns
 from matplotlib.ticker import MaxNLocator
 
 from helpers.constants import Algo, PLOTS_DIR, QUERY_COL, SECS_TO_MS
-from helpers.plots.shared import FIG_SIZE, RATIO, pdf_filename, showing_speedup
+from helpers.plots.shared import RATIO, pdf_filename, showing_speedup
 
 JOB_PLOTS_PATH: Final[Path] = Path(PLOTS_DIR) / "job"
 
@@ -146,17 +146,17 @@ def job_sorting_plot(df: pd.DataFrame, algo: Algo) -> None:
     plt.ylabel(f"Our System (s)")
     plt.xlim(eye_line)
     plt.ylim(eye_line)
-    plt.legend(
-        loc="upper center",
-        ncol=1,
-        bbox_to_anchor=(0.5, 1.25)
-    )
+    plt.legend(loc="upper center", ncol=1, bbox_to_anchor=(0.5, 1.25))
 
     path = JOB_PLOTS_PATH / f"job_fj_{algo.value}.pdf"
     plt.savefig(path, bbox_inches="tight")
 
 
 def alternatives_plot(tdf: pd.DataFrame, queries: List[str]) -> None:
+    # old ones ["#e377c2", "#7f7f7f", "#bcbd22", "#17becf"]
+    # new ones https://coolors.co/palette/335c67-fff3b0-e09f3e-9e2a2b-540b0e
+    color = ["#335C67", "#E09F3E", "#9E2A2B", "#540B0E"]
+    assert len(queries) == len(color)
     fig, axes = plt.subplots(nrows=2, ncols=2)
     fig.set_size_inches(5, 4)
     axes = axes.ravel()
@@ -168,12 +168,7 @@ def alternatives_plot(tdf: pd.DataFrame, queries: List[str]) -> None:
             [QUERY_COL, "FJ (vector)", "FJ", "FJ sorting (pure)", "FJ sorting (hybrid)"]
         ]
         df.columns = [QUERY_COL, "Free Join", "Hash-based", "Sort-based", "Hybrid"]
-        df.plot.bar(
-            ax=ax,
-            legend=None,
-            zorder=3,
-            color=["#e377c2", "#7f7f7f", "#bcbd22", "#17becf"],
-        )
+        df.plot.bar(ax=ax, legend=None, zorder=3, color=color)
         lines, labels = ax.get_legend_handles_labels()
         ax.set_xticklabels([query], rotation=0)
         ax.grid(axis="y", linestyle="dotted")
