@@ -95,7 +95,7 @@ def violin_plot(df: pd.DataFrame) -> None:
 
 def ablation_plot(tdf: pd.DataFrame, queries: List[str]) -> None:
     fig, axes = plt.subplots(nrows=2, ncols=2)
-    fig.set_size_inches(5, 5)
+    fig.set_size_inches(5, 4)
     axes = axes.ravel()
     assert len(queries) == len(axes)
     tdf = tdf.reset_index()
@@ -114,17 +114,18 @@ def ablation_plot(tdf: pd.DataFrame, queries: List[str]) -> None:
         labels,
         loc="upper center",
         ncol=3,
-        bbox_to_anchor=(0.5, 1.1),
+        bbox_to_anchor=(0.5, 1.125),
         frameon=False,
         prop={"size": 12},
     )
     plt.setp(axes[0], ylabel="Runtime (ms)")
+    plt.setp(axes[2], ylabel="Runtime (ms)")
     plt.tight_layout()
     plt.savefig(JOB_PLOTS_PATH / "ablation.pdf", bbox_inches="tight")
 
 
 def job_sorting_plot(df: pd.DataFrame, algo: Algo) -> None:
-    plt.figure(figsize=FIG_SIZE)
+    plt.figure(figsize=(3, 3))
     if algo == Algo.SORTING:
         column = "FJ sorting (pure)"
         label = "Sort-based"
@@ -137,7 +138,7 @@ def job_sorting_plot(df: pd.DataFrame, algo: Algo) -> None:
     plt.plot(eye_line, eye_line, color="gray", lw=0.5)
     x_values = df[df.columns[0]].values
     y_values = df[df.columns[1]].values
-    plt.scatter(x_values, y_values, color="black", s=10, zorder=3)
+    plt.scatter(x_values, y_values, color="black", label=label, s=10, zorder=3)
 
     plt.xscale("log")
     plt.yscale("log")
@@ -145,6 +146,11 @@ def job_sorting_plot(df: pd.DataFrame, algo: Algo) -> None:
     plt.ylabel(f"Our System (s)")
     plt.xlim(eye_line)
     plt.ylim(eye_line)
+    plt.legend(
+        loc="upper center",
+        ncol=1,
+        bbox_to_anchor=(0.5, 1.25)
+    )
 
     path = JOB_PLOTS_PATH / f"job_fj_{algo.value}.pdf"
     plt.savefig(path, bbox_inches="tight")
@@ -152,7 +158,9 @@ def job_sorting_plot(df: pd.DataFrame, algo: Algo) -> None:
 
 def alternatives_plot(tdf: pd.DataFrame, queries: List[str]) -> None:
     fig, axes = plt.subplots(nrows=2, ncols=2)
-    fig.set_size_inches(5, 5)
+    fig.set_size_inches(5, 4)
+    axes = axes.ravel()
+    assert len(queries) == len(axes)
     tdf = tdf.reset_index()
     for query, ax in zip(queries, axes):
         df = tdf[tdf[QUERY_COL] == query]
@@ -176,9 +184,10 @@ def alternatives_plot(tdf: pd.DataFrame, queries: List[str]) -> None:
         labels,
         loc="upper center",
         ncol=2,
-        bbox_to_anchor=(0.5, 1.1),
+        bbox_to_anchor=(0.5, 1.125),
         frameon=False,
     )
     plt.setp(axes[0], ylabel="Runtime (ms)")
+    plt.setp(axes[2], ylabel="Runtime (ms)")
     plt.tight_layout()
     plt.savefig(JOB_PLOTS_PATH / "alternatives.pdf", bbox_inches="tight")

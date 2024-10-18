@@ -63,7 +63,11 @@ def lsqb_plot(df: pd.DataFrame, algo: Algo, vectorised: bool = False) -> None:
     plt.ylabel("Our System (s)")
     plt.xlim(eye_line)
     plt.ylim(eye_line)
-    plt.legend()
+    plt.legend(
+        loc="upper center",
+        ncol=2,
+        bbox_to_anchor=(0.5, 1.3)
+    )
 
     path = LSQB_PLOTS_PATH / f"lsqb_{pdf_filename(algo, vectorised)}"
     plt.savefig(path, bbox_inches="tight")
