@@ -3,8 +3,8 @@ from pathlib import Path
 import pandas as pd
 
 from helpers import free_join, wcoj
+from helpers.benchmarks.shared import join_frames
 from helpers.constants import Algo, LSQB_TIMINGS_DIR, QUERY_COL, SF_COL
-from helpers.experiments.shared import join_frames
 from helpers.plots import lsqb_plot
 from helpers.scaling_factors import SCALING_FACTORS
 

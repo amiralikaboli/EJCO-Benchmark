@@ -5,8 +5,8 @@ import pandas as pd
 
 from helpers import free_join, wcoj
 from helpers.ablations import ABLATIONS, NO_ABLATION
+from helpers.benchmarks.shared import join_frames
 from helpers.constants import Algo, JOB_TIMINGS_DIR, QUERY_COL
-from helpers.experiments.shared import join_frames
 from helpers.plots import ablation_plot, job_plot, violin_plot
 
 

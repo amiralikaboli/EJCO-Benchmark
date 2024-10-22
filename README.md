@@ -92,5 +92,5 @@ Use the datasets and run the code from https://github.com/remysucre/gj-vs-binary
 Now run the benchmarks as follows:
 
 ```sh
-python __main__.py --experiment [JOB|LSQB] 
+python __main__.py --benchmark [JOB|LSQB] 
 ```

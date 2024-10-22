@@ -25,7 +25,7 @@ DATASETS_DIR: Final[str] = os.path.realpath(os.path.join(SDQL_ROOT, "datasets"))
 GENERATED_DIR: Final[str] = os.path.join(SDQL_ROOT, "generated")
 
 
-class Experiment(str, Enum):
+class Benchmark(str, Enum):
     JOB = "JOB"
     LSQB = "LSQB"
 
