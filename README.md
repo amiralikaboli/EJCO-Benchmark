@@ -73,16 +73,24 @@ poetry install
 
 ## Run
 
-You will need the datasets of https://github.com/SIGMOD23p561/free-join.
+Convert the required datasets from Parquet to CSV, then copy them to `progs/../datasets/job/`.
 
-Convert them from Parquet to CSV, then copy them to `progs/../datasets/job/`.
+Results are stored in the `timings` directory. Delete existing `wcoj` results to trigger a re-run.
+
+You will also need to replace `free-join` results with ones generated on your machine.
+
+### JOB queries
+
+Use the datasets and run the code from https://github.com/SIGMOD23p561/free-join.
+
+### LSQB queries
+
+Use the datasets and run the code from https://github.com/remysucre/gj-vs-binary.
+
+### Usage
 
 Now run the benchmarks as follows:
 
 ```sh
-export PYTHONPATH=. && python __main__.py
+python __main__.py --experiment [JOB|LSQB] 
 ```
-
-Results are compared and plotted against those stored in the `timings` directory.
-
-You will need to regenerate them on your machine, using the free-join repository.
