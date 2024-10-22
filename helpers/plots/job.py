@@ -153,9 +153,9 @@ def job_sorting_plot(df: pd.DataFrame, algo: Algo) -> None:
 
 
 def alternatives_plot(tdf: pd.DataFrame, queries: List[str]) -> None:
-    # old ones ["#e377c2", "#7f7f7f", "#bcbd22", "#17becf"]
-    # new ones https://coolors.co/palette/335c67-fff3b0-e09f3e-9e2a2b-540b0e
-    color = ["#335C67", "#E09F3E", "#9E2A2B", "#540B0E"]
+    # TODO better colours ["#335C67", "#E09F3E", "#9E2A2B", "#540B0E"]
+    #  from https://coolors.co/palette/335c67-fff3b0-e09f3e-9e2a2b-540b0e
+    color = ["#e377c2", "#7f7f7f", "#bcbd22", "#17becf"]
     assert len(queries) == len(color)
     fig, axes = plt.subplots(nrows=2, ncols=2)
     fig.set_size_inches(5, 4)
