@@ -21,7 +21,7 @@ def job_plot(df: pd.DataFrame, algo: Algo, vectorised: bool) -> None:
     if algo == Algo.GJ:
         legend_str = "Generic Join"
     else:
-        legend_str = f"Free Join{'\nw/o vectorization' if not vectorised else ''}"
+        legend_str = f"Hash-based"
 
     df /= SECS_TO_MS
     df.drop(df.columns[-1], axis=1, inplace=True)
@@ -118,26 +118,31 @@ def ablation_plot(tdf: pd.DataFrame, queries: List[str]) -> None:
         frameon=False,
         prop={"size": 12},
     )
-    plt.setp(axes[0], ylabel="Runtime (ms)")
-    plt.setp(axes[2], ylabel="Runtime (ms)")
+    plt.setp(axes[0], ylabel="Run Time (ms)")
+    plt.setp(axes[2], ylabel="Run Time (ms)")
     plt.tight_layout()
     plt.savefig(JOB_PLOTS_PATH / "ablation.pdf", bbox_inches="tight")
 
 
-def job_sorting_plot(df: pd.DataFrame, algo: Algo) -> None:
+def job_sorting_plot(df: pd.DataFrame, algo: Algo, vectorized: bool = False) -> None:
     plt.figure(figsize=(3, 3))
     if algo == Algo.SORTING:
         column = "FJ sorting (pure)"
         label = "Sort-based"
+        if vectorized:
+            raise "Error!"
     else:
         column = "FJ sorting (hybrid)"
-        label = "Hybrid"
-    df = df[["FJ (vector)", column]]
+        label = f"Free Join{'\nw/o vectorization' if not vectorized else ''}"
+    df = df[["FJ (scalar)", "FJ (vector)", column]]
     df /= SECS_TO_MS
     eye_line = [np.min(df) / RATIO, np.max(df) * RATIO]
     plt.plot(eye_line, eye_line, color="gray", lw=0.5)
-    x_values = df[df.columns[0]].values
-    y_values = df[df.columns[1]].values
+    if not vectorized:
+        x_values = df[df.columns[0]].values
+    else:
+        x_values = df[df.columns[1]].values
+    y_values = df[df.columns[2]].values
     plt.scatter(x_values, y_values, color="black", label=label, s=10, zorder=3)
 
     plt.xscale("log")
@@ -148,7 +153,7 @@ def job_sorting_plot(df: pd.DataFrame, algo: Algo) -> None:
     plt.ylim(eye_line)
     plt.legend(loc="upper center", ncol=1, bbox_to_anchor=(0.5, 1.25))
 
-    path = JOB_PLOTS_PATH / f"job_fj_{algo.value}.pdf"
+    path = JOB_PLOTS_PATH / f"job_fj_{algo.value}{'_wo' if not vectorized else ''}.pdf"
     plt.savefig(path, bbox_inches="tight")
 
 
@@ -182,7 +187,7 @@ def alternatives_plot(tdf: pd.DataFrame, queries: List[str]) -> None:
         bbox_to_anchor=(0.5, 1.125),
         frameon=False,
     )
-    plt.setp(axes[0], ylabel="Runtime (ms)")
-    plt.setp(axes[2], ylabel="Runtime (ms)")
+    plt.setp(axes[0], ylabel="Run Time (ms)")
+    plt.setp(axes[2], ylabel="Run Time (ms)")
     plt.tight_layout()
     plt.savefig(JOB_PLOTS_PATH / "alternatives.pdf", bbox_inches="tight")

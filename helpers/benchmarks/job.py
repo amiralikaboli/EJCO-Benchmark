@@ -29,6 +29,7 @@ def job_plots() -> None:
     ablation_plot(df, ["9d", "12b", "16b", "19d"])
     job_sorting_plot(df, Algo.SORTING)
     job_sorting_plot(df, Algo.HYBRID)
+    job_sorting_plot(df, Algo.HYBRID, vectorized=True)
     alternatives_plot(df, ["8a", "12b", "17b", "17f"])
 
 
