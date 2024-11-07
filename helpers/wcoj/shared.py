@@ -1,5 +1,6 @@
 import os
 import re
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any, Final
 
@@ -19,8 +20,10 @@ def write_results_frame(data_dir: str, output_csv: str) -> None:
     df.to_csv(output_csv, index=False)
 
 
-def get_query_names_and_times(data_dir: str) -> list[tuple[str, int]]:
-    files = get_files(data_dir)
+def get_query_names_and_times(
+    data_dir: str, file_filter: Callable[[str], bool] = lambda _: True
+) -> list[tuple[str, int]]:
+    files = get_files(data_dir, file_filter)
     query_names = get_query_names(files)
     times = [
         get_ms(Path(os.path.join(data_dir, f)).read_text(), RE_RUNTIME) for f in files
@@ -32,9 +35,14 @@ def get_query_names(files: list[str]) -> list[str]:
     return [f.split(".", 1)[0] for f in files]
 
 
-def get_files(data_dir: str) -> list[str]:
+def get_files(
+    data_dir: str, file_filter: Callable[[str], bool] = lambda _: True
+) -> list[str]:
     return sorted(
-        (f for f in next(os.walk(data_dir))[2] if f.endswith(".result")),
+        filter(
+            file_filter,
+            (f for f in next(os.walk(data_dir))[2] if f.endswith(".result")),
+        ),
         key=lambda f: "0" + f if len(f) == len("__.result") else f,
     )
 
