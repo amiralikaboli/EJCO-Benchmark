@@ -12,6 +12,7 @@ from helpers.constants import Algo, QUERY_COL, RUNTIME_COL, SECS_TO_MS
 from helpers.plots.shared import RATIO
 from helpers.wcoj.shared import get_query_names_and_times
 
+# ran queries from https://github.com/edin-dal/WCOJ/tree/sorting/generated/cpp/hybrid/gj
 FILE_DIR: Final[str] = os.path.dirname(os.path.realpath(__file__))
 DATA_DIR: Final[str] = os.path.join(FILE_DIR, "gj_times")
 
