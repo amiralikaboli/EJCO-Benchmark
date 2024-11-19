@@ -10,7 +10,7 @@ import pandas as pd
 from helpers import free_join
 from helpers.constants import Algo, QUERY_COL, RUNTIME_COL, SECS_TO_MS
 from helpers.plots.shared import RATIO
-from helpers.wcoj.shared import get_files, get_query_names_and_times
+from helpers.wcoj.shared import get_query_names_and_times
 
 FILE_DIR: Final[str] = os.path.dirname(os.path.realpath(__file__))
 DATA_DIR: Final[str] = os.path.join(FILE_DIR, "gj_times")
@@ -18,18 +18,11 @@ DATA_DIR: Final[str] = os.path.join(FILE_DIR, "gj_times")
 GJ_HYBRID_COL: Final[str] = "GJ sorting (hybrid)"
 GJ_FREE_JOIN_COL: Final[str] = "GJ (free-join)"
 
-# TODO debug and rerun these queries
-INVALID_QUERIES = (13, 14, 21, 25, 31)
-
-
 if __name__ == "__main__":
     gj_free_join = free_join.read_job_result(algo=Algo.GJ)
     gj_free_join.rename(columns={RUNTIME_COL: GJ_FREE_JOIN_COL}, inplace=True)
 
-    print("Excluding queries:", ", ".join(map(str, INVALID_QUERIES)))
-    is_valid = lambda f: not any(f.startswith(str(x)) for x in INVALID_QUERIES)
-    files = list(filter(is_valid, get_files(DATA_DIR)))
-    times = get_query_names_and_times(DATA_DIR, is_valid)
+    times = get_query_names_and_times(DATA_DIR)
     gj_hybrid = pd.DataFrame(times, columns=[QUERY_COL, RUNTIME_COL])
     gj_hybrid.rename(columns={RUNTIME_COL: GJ_HYBRID_COL}, inplace=True)
 
