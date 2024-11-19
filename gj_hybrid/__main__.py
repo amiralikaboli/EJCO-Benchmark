@@ -36,6 +36,8 @@ if __name__ == "__main__":
     print("Geometric Mean", geometric_mean)
 
     print(df)
+
+    plt.figure(figsize=(3, 3))
     legend_str = "Generic Join"
 
     df /= SECS_TO_MS
