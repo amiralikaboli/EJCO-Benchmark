@@ -39,7 +39,7 @@ LINE_STYLES: Final[dict[str, str]] = {
 def lsqb_plot(df: pd.DataFrame, algo: Algo, vectorised: bool = False) -> None:
     plt.figure(figsize=(3, 3))
 
-    colnames = list(get_colnames(algo, vectorised))
+    colnames = list(get_colnames(vectorised, algo))
     df = df[colnames]
     df /= SECS_TO_MS
     queries = {
@@ -55,7 +55,15 @@ def lsqb_plot(df: pd.DataFrame, algo: Algo, vectorised: bool = False) -> None:
         # sort by y values
         x_values = [x for _, x in sorted(zip(y_values, x_values))]
         y_values = [y for y, _ in sorted(zip(y_values, x_values))]
-        plt.plot(x_values, y_values, linestyle=LINE_STYLES[q], color="black", label=q, lw=2, zorder=3)
+        plt.plot(
+            x_values,
+            y_values,
+            linestyle=LINE_STYLES[q],
+            color="black",
+            label=q,
+            lw=2,
+            zorder=3,
+        )
 
     plt.xscale("log")
     plt.yscale("log")
@@ -63,11 +71,7 @@ def lsqb_plot(df: pd.DataFrame, algo: Algo, vectorised: bool = False) -> None:
     plt.ylabel("Our System (s)")
     plt.xlim(eye_line)
     plt.ylim(eye_line)
-    plt.legend(
-        loc="upper center",
-        ncol=2,
-        bbox_to_anchor=(0.5, 1.3)
-    )
+    plt.legend(loc="upper center", ncol=2, bbox_to_anchor=(0.5, 1.3))
 
     path = LSQB_PLOTS_PATH / f"lsqb_{pdf_filename(algo, vectorised)}"
     plt.savefig(path, bbox_inches="tight")
@@ -94,8 +98,18 @@ def lsqb_all_plot(df: pd.DataFrame) -> None:
         # sort by y values
         x_values = [x for _, x in sorted(zip(y_values, x_values))]
         y_values = [y for y, _ in sorted(zip(y_values, x_values))]
-        plt.plot(x_values, y_values, linestyle=LINE_STYLES[q], color="black", label=q, lw=2, zorder=3)
-        plt.plot(x2_values, y2_values, linestyle=LINE_STYLES[q], color="gray", lw=2, zorder=3)
+        plt.plot(
+            x_values,
+            y_values,
+            linestyle=LINE_STYLES[q],
+            color="black",
+            label=q,
+            lw=2,
+            zorder=3,
+        )
+        plt.plot(
+            x2_values, y2_values, linestyle=LINE_STYLES[q], color="gray", lw=2, zorder=3
+        )
 
     plt.xscale("log")
     plt.yscale("log")

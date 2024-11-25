@@ -5,7 +5,7 @@ from typing import Callable, Final
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from helpers.constants import Algo
+from helpers.constants import Algo, Sorting
 
 FIG_SIZE: Final[tuple[int, int]] = (5, 5)
 RATIO: Final[float] = 1.2
@@ -24,7 +24,7 @@ def showing_speedup(
 
     @wraps(plot)
     def _plot(df: pd.DataFrame, algo: Algo, vectorised: bool = False):
-        df = build_frame(df, algo, vectorised)
+        df = build_frame(df, vectorised, algo)
         geometric_mean = round(
             statistics.geometric_mean(df["Performance Improvement"]), 2
         )
@@ -36,19 +36,35 @@ def showing_speedup(
     return _plot
 
 
-def build_frame(df: pd.DataFrame, algo: Algo, vectorised: bool) -> pd.DataFrame:
-    baseline_col, ours_col = get_colnames(algo, vectorised)
+def build_frame(
+    df: pd.DataFrame, vectorised: bool, algo: Algo, sorting: Sorting | None = None
+) -> pd.DataFrame:
+    baseline_col, ours_col = get_colnames(vectorised, algo, sorting)
     df = df[[baseline_col, ours_col]].copy()
     df["Performance Improvement"] = (df[baseline_col] / df[ours_col]).round(2)
     return df.sort_values(by="Performance Improvement", ascending=False)
 
 
-def get_colnames(algo: Algo, vectorised: bool) -> tuple[str, str]:
+def get_colnames(
+    vectorised: bool, algo: Algo, sorting: Sorting | None = None
+) -> tuple[str, str]:
     if algo == Algo.GJ:
         assert not vectorised
-        return "GJ (free-join)", "GJ"
+        if sorting == Sorting.SORTING:
+            raise NotImplementedError()
+        elif sorting == Sorting.HYBRID:
+            ours = "GJ sorting (hybrid)"
+        else:
+            ours = "GJ"
+        return "GJ (free-join)", ours
     else:
-        return "FJ (vector)" if vectorised else "FJ (scalar)", "FJ"
+        if sorting == Sorting.HYBRID:
+            ours = "FJ sorting (hybrid)"
+        elif sorting == Sorting.SORTING:
+            ours = "FJ sorting (pure)"
+        else:
+            ours = "FJ"
+        return "FJ (vector)" if vectorised else "FJ (scalar)", ours
 
 
 def pdf_filename(algo: Algo, vectorised: bool) -> str:
