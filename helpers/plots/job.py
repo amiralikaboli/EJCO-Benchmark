@@ -8,7 +8,7 @@ import scipy
 import seaborn as sns
 from matplotlib.ticker import MaxNLocator
 
-from helpers.constants import Algo, PLOTS_DIR, QUERY_COL, SECS_TO_MS
+from helpers.constants import Algo, PLOTS_DIR, QUERY_COL, SECS_TO_MS, Sorting
 from helpers.plots.shared import RATIO, pdf_filename, showing_speedup
 
 JOB_PLOTS_PATH: Final[Path] = Path(PLOTS_DIR) / "job"
@@ -124,14 +124,22 @@ def ablation_plot(tdf: pd.DataFrame, queries: List[str]) -> None:
     plt.savefig(JOB_PLOTS_PATH / "ablation.pdf", bbox_inches="tight")
 
 
-def job_sorting_plot(df: pd.DataFrame, algo: Algo, vectorized: bool = False) -> None:
+def job_sorting_plot(
+    df: pd.DataFrame, sorting: Sorting, algo: Algo, vectorized: bool = False
+) -> None:
+    if algo == Algo.GJ and vectorized:
+        raise ValueError("Vectorization supported for GJ")
+
+    if algo == Algo.GJ:
+        raise NotImplementedError()
+
     plt.figure(figsize=(3, 3))
-    if algo == Algo.SORTING:
+    if sorting == sorting.SORTING:
         column = "FJ sorting (pure)"
         label = "Sort-based"
         if vectorized:
             raise "Error!"
-    else:
+    elif sorting == sorting.HYBRID:
         column = "FJ sorting (hybrid)"
         label = f"Free Join{'\nw/o vectorization' if not vectorized else ''}"
     df = df[["FJ (scalar)", "FJ (vector)", column]]

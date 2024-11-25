@@ -33,5 +33,8 @@ class Benchmark(str, Enum):
 class Algo(Enum):
     FJ = "fj"
     GJ = "gj"
-    SORTING = "sorting"
+
+
+class Sorting(Enum):
+    SORTING = "sorting"  # pure sorting
     HYBRID = "hybrid"

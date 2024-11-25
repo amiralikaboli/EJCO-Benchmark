@@ -6,7 +6,7 @@ import pandas as pd
 from helpers import free_join, wcoj
 from helpers.ablations import ABLATIONS, NO_ABLATION
 from helpers.benchmarks.shared import join_frames
-from helpers.constants import Algo, JOB_TIMINGS_DIR, QUERY_COL
+from helpers.constants import Algo, JOB_TIMINGS_DIR, QUERY_COL, Sorting
 from helpers.plots import (
     ablation_plot,
     alternatives_plot,
@@ -27,9 +27,9 @@ def job_plots() -> None:
     job_fj_plot(df)
     violin_plot(df)
     ablation_plot(df, ["9d", "12b", "16b", "19d"])
-    job_sorting_plot(df, Algo.SORTING)
-    job_sorting_plot(df, Algo.HYBRID)
-    job_sorting_plot(df, Algo.HYBRID, vectorized=True)
+    job_sorting_plot(df, Sorting.SORTING, Algo.FJ)
+    job_sorting_plot(df, Sorting.HYBRID, Algo.FJ)
+    job_sorting_plot(df, Sorting.HYBRID, Algo.FJ, vectorized=True)
     alternatives_plot(df, ["8a", "12b", "17b", "17f"])
 
 
@@ -46,6 +46,7 @@ def job_overview() -> pd.DataFrame:
             "FJ",
             "FJ sorting (pure)",
             "FJ sorting (hybrid)",
+            # "GJ sorting (hybrid)",
         ]
     )
     results = (
@@ -62,10 +63,9 @@ def job_overview() -> pd.DataFrame:
         ]
         + [
             wcoj.read_job_result(algo=Algo.FJ, ablation=NO_ABLATION),
-            wcoj.read_job_result(algo=Algo.FJ, cpp_dir=os.path.join("sorting", "pure")),
-            wcoj.read_job_result(
-                algo=Algo.FJ, cpp_dir=os.path.join("sorting", "hybrid")
-            ),
+            wcoj.read_job_result(algo=Algo.FJ, sorting=Sorting.SORTING),
+            wcoj.read_job_result(algo=Algo.FJ, sorting=Sorting.HYBRID),
+            # wcoj.read_job_result(algo=Algo.GJ, sorting=Sorting.HYBRID),
         ]
     )
     return join_frames(names, results).set_index(QUERY_COL)
