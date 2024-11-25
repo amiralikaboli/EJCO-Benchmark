@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 import pandas as pd
@@ -30,6 +29,7 @@ def job_plots() -> None:
     job_sorting_plot(df, Sorting.SORTING, Algo.FJ)
     job_sorting_plot(df, Sorting.HYBRID, Algo.FJ)
     job_sorting_plot(df, Sorting.HYBRID, Algo.FJ, vectorized=True)
+    job_sorting_plot(df, Sorting.HYBRID, Algo.GJ)
     alternatives_plot(df, ["8a", "12b", "17b", "17f"])
 
 
@@ -46,7 +46,7 @@ def job_overview() -> pd.DataFrame:
             "FJ",
             "FJ sorting (pure)",
             "FJ sorting (hybrid)",
-            # "GJ sorting (hybrid)",
+            "GJ sorting (hybrid)",
         ]
     )
     results = (
@@ -65,7 +65,7 @@ def job_overview() -> pd.DataFrame:
             wcoj.read_job_result(algo=Algo.FJ, ablation=NO_ABLATION),
             wcoj.read_job_result(algo=Algo.FJ, sorting=Sorting.SORTING),
             wcoj.read_job_result(algo=Algo.FJ, sorting=Sorting.HYBRID),
-            # wcoj.read_job_result(algo=Algo.GJ, sorting=Sorting.HYBRID),
+            wcoj.read_job_result(algo=Algo.GJ, sorting=Sorting.HYBRID),
         ]
     )
     return join_frames(names, results).set_index(QUERY_COL)

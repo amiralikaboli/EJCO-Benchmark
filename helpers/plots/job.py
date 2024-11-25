@@ -127,30 +127,40 @@ def ablation_plot(tdf: pd.DataFrame, queries: List[str]) -> None:
 def job_sorting_plot(
     df: pd.DataFrame, sorting: Sorting, algo: Algo, vectorized: bool = False
 ) -> None:
-    if algo == Algo.GJ and vectorized:
-        raise ValueError("Vectorization supported for GJ")
-
     if algo == Algo.GJ:
-        raise NotImplementedError()
+        if vectorized:
+            raise ValueError("Vectorization supported for GJ")
+        if sorting == Sorting.SORTING:
+            raise ValueError("Pure sorting not supported for GJ")
+
+    if sorting == sorting.SORTING and vectorized:
+        raise ValueError()
 
     plt.figure(figsize=(3, 3))
+
+    vector_or_scalar = "vector" if vectorized else "scalar"
+    theirs = "GJ (free-join)" if algo == Algo.GJ else f"FJ ({vector_or_scalar})"
+
+    ours = (
+        f"FJ sorting (pure)"
+        if sorting == sorting.SORTING
+        else f"{algo.value.upper()} sorting (hybrid)"
+    )
+
     if sorting == sorting.SORTING:
-        column = "FJ sorting (pure)"
         label = "Sort-based"
-        if vectorized:
-            raise "Error!"
     elif sorting == sorting.HYBRID:
-        column = "FJ sorting (hybrid)"
-        label = f"Free Join{'\nw/o vectorization' if not vectorized else ''}"
-    df = df[["FJ (scalar)", "FJ (vector)", column]]
+        if algo == Algo.FJ:
+            label = f"Free Join{'\nw/o vectorization' if not vectorized else ''}"
+        else:
+            label = "Generic Join"
+
+    df = df[[theirs, ours]]
     df /= SECS_TO_MS
     eye_line = [np.min(df) / RATIO, np.max(df) * RATIO]
     plt.plot(eye_line, eye_line, color="gray", lw=0.5)
-    if not vectorized:
-        x_values = df[df.columns[0]].values
-    else:
-        x_values = df[df.columns[1]].values
-    y_values = df[df.columns[2]].values
+    x_values = df[df.columns[0]].values
+    y_values = df[df.columns[1]].values
     plt.scatter(x_values, y_values, color="black", label=label, s=10, zorder=3)
 
     plt.xscale("log")
@@ -160,8 +170,8 @@ def job_sorting_plot(
     plt.xlim(eye_line)
     plt.ylim(eye_line)
     plt.legend(loc="upper center", ncol=1, bbox_to_anchor=(0.5, 1.25))
-
-    path = JOB_PLOTS_PATH / f"job_fj_{algo.value}{'_wo' if not vectorized else ''}.pdf"
+    suffix = "_wo" if algo == Algo.FJ and not vectorized else ""
+    path = JOB_PLOTS_PATH / f"job_{algo.value}_{sorting.value}{suffix}.pdf"
     plt.savefig(path, bbox_inches="tight")
 
 
