@@ -71,8 +71,8 @@ def pick_queries(df: pd.DataFrame) -> tuple[str, str, str, str]:
     )
     # 8a was an old incorrect query
     assert "8a" not in sort_hybrid_hash.index
-    # 7b shows the highest speedup for sorting > hybrid
-    assert "7b" in sort_hybrid_hash.index
+    # 6d shows good speedups for both sorting > hybrid and hybrid > hash
+    assert "6d" in sort_hybrid_hash.index
 
     # hash > sorting > hybrid
     hash_hybrid_sort = fj_hash_vs_sort_vs_hybrid(
@@ -87,9 +87,7 @@ def pick_queries(df: pd.DataFrame) -> tuple[str, str, str, str]:
     hybrid_hash_sort.sort_index(inplace=True)
     hash_hybrid_sort = hash_hybrid_sort[is_variant(hash_hybrid_sort.index)]
     hash_hybrid_sort.sort_index(inplace=True)
-    # 7a shows good speedups for both hybrid > hash and hash > sorting
-    assert "7a" in hybrid_hash_sort.index
-    # 7c shows good speedups for both hash > hybrid and hybrid > sorting
-    assert "7c" in hash_hybrid_sort.index
+    assert "18a" in hybrid_hash_sort.index
+    assert "18c" in hash_hybrid_sort.index
 
-    return "7a", "7b", "7c", "12b"
+    return "6d", "12b", "18a", "18c"
