@@ -176,7 +176,7 @@ def job_sorting_plot(
 
 
 def alternatives_plot(tdf: pd.DataFrame, queries: List[str]) -> None:
-    color = ["#335C67", "#E09F3E", "#9E2A2B", "#540B0E"]
+    color = ["#e377c2", "#7f7f7f", "#bcbd22", "#17becf"]
     assert len(queries) == len(color)
     fig, axes = plt.subplots(nrows=2, ncols=2)
     fig.set_size_inches(5, 4)
