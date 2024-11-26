@@ -9,7 +9,7 @@ def fj_hash_vs_sort_vs_hybrid(
     sortings: tuple[Sorting | None, Sorting | None, Sorting | None],
     include_counter_examples: bool = False,
     speedup_cutoff: float = 1.10,
-    query_ms_cutoff: float = 50,
+    query_ms_cutoff: float = 49,  # 12b hybrid ≈ 50 ms so give some margin
 ) -> pd.DataFrame:
     assert len(sortings) == len(set(sortings)), "should be distinct"
     colnames = [get_colnames(False, algo=Algo.FJ, sorting=s)[1] for s in sortings]
@@ -71,8 +71,7 @@ def pick_queries(df: pd.DataFrame) -> tuple[str, str, str, str]:
     )
     # 8a was an old incorrect query
     assert "8a" not in sort_hybrid_hash.index
-    # 6d shows good speedups for both sorting > hybrid and hybrid > hash
-    assert "6d" in sort_hybrid_hash.index
+    assert "7b" in sort_hybrid_hash.index
 
     # hash > sorting > hybrid
     hash_hybrid_sort = fj_hash_vs_sort_vs_hybrid(
@@ -87,7 +86,7 @@ def pick_queries(df: pd.DataFrame) -> tuple[str, str, str, str]:
     hybrid_hash_sort.sort_index(inplace=True)
     hash_hybrid_sort = hash_hybrid_sort[is_variant(hash_hybrid_sort.index)]
     hash_hybrid_sort.sort_index(inplace=True)
-    assert "18a" in hybrid_hash_sort.index
-    assert "18c" in hash_hybrid_sort.index
+    assert "7a" in hybrid_hash_sort.index
+    assert "7c" in hash_hybrid_sort.index
 
-    return "6d", "12b", "18a", "18c"
+    return "7a", "7b", "7c", "12b"
