@@ -14,6 +14,7 @@ from helpers.plots import (
     job_sorting_plot,
     violin_plot,
 )
+from helpers.plots.alternatives import pick_queries
 
 
 def job_plots() -> None:
@@ -30,7 +31,9 @@ def job_plots() -> None:
     job_sorting_plot(df, Sorting.HYBRID, Algo.FJ)
     job_sorting_plot(df, Sorting.HYBRID, Algo.FJ, vectorized=True)
     job_sorting_plot(df, Sorting.HYBRID, Algo.GJ)
-    alternatives_plot(df, ["8a", "12b", "17b", "17f"])
+    # old incorrect queries were ["8a", "12b", "17b", "17f"]
+    alternatives_queries = pick_queries(df)
+    alternatives_plot(df, list(alternatives_queries))
 
 
 def job_overview() -> pd.DataFrame:
