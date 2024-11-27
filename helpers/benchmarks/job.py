@@ -50,6 +50,7 @@ def job_overview() -> pd.DataFrame:
             "FJ sorting (pure)",
             "FJ sorting (hybrid)",
             "GJ sorting (hybrid)",
+            "FJ revised plans",
         ]
     )
     results = (
@@ -69,6 +70,7 @@ def job_overview() -> pd.DataFrame:
             wcoj.read_job_result(algo=Algo.FJ, sorting=Sorting.SORTING),
             wcoj.read_job_result(algo=Algo.FJ, sorting=Sorting.HYBRID),
             wcoj.read_job_result(algo=Algo.GJ, sorting=Sorting.HYBRID),
+            wcoj.read_job_result(algo=Algo.FJ, revised_plans=True),
         ]
     )
     return join_frames(names, results).set_index(QUERY_COL)

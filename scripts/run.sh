@@ -8,7 +8,7 @@ mkdir -p $from_root
 echo "*" > "$from_root/.gitignore"
 
 cd "$(realpath progs/)/../generated" || exit
-for file in ../progs/$2/$4/*.sdql; do
+for file in ../progs/$5/*.sdql; do
   name=${file##*/}
   no_ext="${name%.*}"
   echo $no_ext

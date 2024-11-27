@@ -8,6 +8,6 @@ from helpers.constants import QUERY_COL, RUNTIME_COL
 
 def join_frames(names: Iterable[str], frames: Iterable[pd.DataFrame]) -> pd.DataFrame:
     return reduce(
-        lambda l, r: pd.merge(l, r, on=QUERY_COL),
+        lambda l, r: pd.merge(l, r, on=QUERY_COL, how="outer"),
         (df.rename(columns={RUNTIME_COL: name}) for name, df in zip(names, frames)),
     )
