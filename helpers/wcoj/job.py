@@ -44,23 +44,23 @@ def read_job_result(
     results_path = os.path.join(data_path, f"{algo.value}_results")
     results_csv = os.path.join(data_path, f"{algo.value}_results.csv")
 
-    if not Path(results_path).is_dir():
-        if sorting is None and not revised_plans:
-            apply_ablation(ablation)
-
-        if revised_plans:
-            progs_path = f"job/revised"
-        elif sorting is None:
-            progs_path = f"job/{algo.value}"
-        else:
-            progs_path = f"job/{sorting.value}/{algo.value}"
-
-        subprocess.call(f"./codegen.sh {progs_path} 5", shell=True, cwd=SCRIPTS_DIR)
-        subprocess.call(f"./compile.sh {progs_path}", shell=True, cwd=SCRIPTS_DIR)
-        run = f"./run.sh {timeout} job {data_dir} {algo.value} {progs_path}"
-        subprocess.call(run, shell=True, cwd=SCRIPTS_DIR)
-
     if not Path(results_csv).is_file():
+        if not Path(results_path).is_dir():
+            if sorting is None and not revised_plans:
+                apply_ablation(ablation)
+
+            if revised_plans:
+                progs_path = f"job/revised"
+            elif sorting is None:
+                progs_path = f"job/{algo.value}"
+            else:
+                progs_path = f"job/{sorting.value}/{algo.value}"
+
+            subprocess.call(f"./codegen.sh {progs_path} 5", shell=True, cwd=SCRIPTS_DIR)
+            subprocess.call(f"./compile.sh {progs_path}", shell=True, cwd=SCRIPTS_DIR)
+            run = f"./run.sh {timeout} job {data_dir} {algo.value} {progs_path}"
+            subprocess.call(run, shell=True, cwd=SCRIPTS_DIR)
+
         write_results_frame(results_path, results_csv)
 
     return pd.read_csv(results_csv, dtype=DTYPES)
