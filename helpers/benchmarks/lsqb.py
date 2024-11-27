@@ -43,4 +43,4 @@ def lsqb_overviews(sf: float) -> pd.DataFrame:
         wcoj.read_lsqb_result(algo=Algo.GJ, sf=sf),
         wcoj.read_lsqb_result(algo=Algo.FJ, sf=sf),
     ]
-    return join_frames(names, results).set_index(QUERY_COL)
+    return join_frames(names, results)

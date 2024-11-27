@@ -5,7 +5,7 @@ import pandas as pd
 from helpers import free_join, wcoj
 from helpers.ablations import ABLATIONS, NO_ABLATION
 from helpers.benchmarks.shared import join_frames
-from helpers.constants import Algo, JOB_TIMINGS_DIR, QUERY_COL, Sorting
+from helpers.constants import Algo, JOB_TIMINGS_DIR, Sorting
 from helpers.plots import (
     ablation_plot,
     alternatives_plot,
@@ -21,19 +21,27 @@ def job_plots() -> None:
     df = job_overview()
     print(df)
     df.to_csv(Path(JOB_TIMINGS_DIR) / "overview.csv", index=True)
+
     job_plot(df, Algo.GJ)
     job_plot(df, Algo.FJ, vectorised=False)
     job_plot(df, Algo.FJ, vectorised=True)
+
     job_fj_plot(df)
     violin_plot(df)
     ablation_plot(df, ["9d", "12b", "16b", "19d"])
+
     job_sorting_plot(df, Sorting.SORTING, Algo.FJ)
     job_sorting_plot(df, Sorting.HYBRID, Algo.FJ)
     job_sorting_plot(df, Sorting.HYBRID, Algo.FJ, vectorized=True)
     job_sorting_plot(df, Sorting.HYBRID, Algo.GJ)
+
     # old incorrect queries were ["8a", "12b", "17b", "17f"]
     alternatives_queries = pick_queries(df)
     alternatives_plot(df, list(alternatives_queries))
+
+    revised_plans_df = revised_plans_table(df)
+    print(f"\n{revised_plans_df}")
+    revised_plans_df.to_csv(Path(JOB_TIMINGS_DIR) / "revised_plans.csv", index=True)
 
 
 def job_overview() -> pd.DataFrame:
@@ -73,4 +81,13 @@ def job_overview() -> pd.DataFrame:
             wcoj.read_job_result(algo=Algo.FJ, revised_plans=True),
         ]
     )
-    return join_frames(names, results).set_index(QUERY_COL)
+    return join_frames(names, results)
+
+
+def revised_plans_table(df: pd.DataFrame) -> pd.DataFrame:
+    df = df.loc[["3b", "17b", "15b", "3a", "14a", "15a"]]
+    df = df[["FJ (scalar)", "FJ sorting (hybrid)", "FJ revised plans"]]
+    df = df.copy()
+    df.insert(2, "Speedup (default)", (df.iloc[:, 0] / df.iloc[:, 1]).round(2))
+    df["Speedup (rev)"] = (df.iloc[:, 0] / df.iloc[:, -1]).round(2)
+    return df

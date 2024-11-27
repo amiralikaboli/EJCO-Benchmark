@@ -77,7 +77,7 @@ def job_fj_plot(df: pd.DataFrame) -> None:
 def violin_plot(df: pd.DataFrame) -> None:
     plt.figure(figsize=(6, 3))
 
-    mat = df[["O0", "O1", "O2", "O3", "O4", "FJ", "FJ (vector)"]].to_numpy()
+    mat = df[["O0", "O1", "O2", "O3", "O4", "FJ", "FJ (vector)"]].astype(int).to_numpy()
     mat = 1 / (mat[:, :-1] / mat[:, -1][:, np.newaxis])
     dfmat = pd.DataFrame(mat, columns=["Naive", "O1", "O2", "O3", "O4", "O5"])
     gmeans = np.array([scipy.stats.gmean(dfmat[col]) for col in dfmat.columns])
