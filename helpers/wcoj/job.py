@@ -50,7 +50,7 @@ def read_job_result(
                 apply_ablation(ablation)
 
             if revised_plans:
-                progs_path = f"job/revised"
+                progs_path = f"job/revised/{algo.value}"
             elif sorting is None:
                 progs_path = f"job/{algo.value}"
             else:
