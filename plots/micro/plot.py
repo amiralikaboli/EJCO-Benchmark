@@ -10,15 +10,21 @@ plt.rcParams["ps.fonttype"] = 42
 plt.rcParams["axes.spines.right"] = False
 plt.rcParams["axes.spines.top"] = False
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     plt.figure(figsize=(3.5, 3.5))
 
     df = pd.read_csv("results.csv")
     df = df[df["rep"] == 1]
     df["value"] = np.round(df["hash"] / df["sort"], 2)
     heatmap_data = df.pivot_table(index="S", columns="R", values="value")
-    heatmap_data.columns = heatmap_data.index = ["$10^{4}$", "$10^{5}$", "$10^{6}$", "$10^{7}$", "$10^{8}$"]
-    ax = sns.heatmap(heatmap_data, annot=True, cmap="BuPu", cbar=False, linewidths=0, fmt=".1f")
+    heatmap_data.columns = heatmap_data.index = [f"$10^{i}$" for i in range(4, 9)]
+    rows_na = set(heatmap_data.columns[heatmap_data.isna().any(axis=1)])
+    cols_na = set(heatmap_data.columns[heatmap_data.isna().any(axis=1)])
+    heatmap_data.drop(rows_na, axis=0, inplace=True)
+    heatmap_data.drop(cols_na, axis=1, inplace=True)
+    ax = sns.heatmap(
+        heatmap_data, annot=True, cmap="BuPu", cbar=False, linewidths=0, fmt=".1f"
+    )
 
     plt.gca().invert_yaxis()
 

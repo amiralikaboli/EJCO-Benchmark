@@ -2,6 +2,3 @@
 
 !.gitignore
 !micro
-!micro/micro.cpp
-!micro/benchmark.sh
-!micro/plot.py
