@@ -17,7 +17,7 @@ if __name__ == "__main__":
     df = df[df["rep"] == 1]
     df["value"] = np.round(df["hash"] / df["sort"], 2)
     heatmap_data = df.pivot_table(index="S", columns="R", values="value")
-    heatmap_data.columns = heatmap_data.index = [f"$10^{i}$" for i in range(4, 9)]
+    heatmap_data.columns = heatmap_data.index = [f"$10^{i}$" for i in range(5, 10)]
     rows_na = set(heatmap_data.columns[heatmap_data.isna().any(axis=1)])
     cols_na = set(heatmap_data.columns[heatmap_data.isna().any(axis=1)])
     heatmap_data.drop(rows_na, axis=0, inplace=True)

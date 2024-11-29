@@ -4,7 +4,7 @@ set -e
 
 clang++ micro.cpp -std=c++17 -O3 -march=native -mtune=native -Wno-narrowing -ftree-vectorize -o out
 
-SIZES=(10 100 1000 10000 100000)
+SIZES=(1 10 100 1000 10000)
 REPS=(1)
 ITERS=10
 

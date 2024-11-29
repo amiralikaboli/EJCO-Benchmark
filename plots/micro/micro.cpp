@@ -3,8 +3,8 @@
 using namespace std;
 
 int main(int argc, char *argv[]) {
-    const int R_size = stoi(argv[1]) * 1000;
-    const int S_size = stoi(argv[2]) * 1000;
+    const int R_size = stoi(argv[1]) * 100000;
+    const int S_size = stoi(argv[2]) * 100000;
     const int rep = stoi(argv[3]);
     const int R_limit = R_size / rep;
     const int S_limit = R_limit * 2;
