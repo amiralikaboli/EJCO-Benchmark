@@ -35,8 +35,7 @@ def job_plots() -> None:
     job_sorting_plot(df, Sorting.HYBRID, Algo.FJ, vectorized=True)
     job_sorting_plot(df, Sorting.HYBRID, Algo.GJ)
 
-    # old incorrect queries were ["8a", "12b", "17b", "17f"]
-    alternatives_queries = pick_queries(df)
+    alternatives_queries = ["7a", "7b", "17b", "17f"]
     alternatives_plot(df, list(alternatives_queries))
 
     revised_plans_df = revised_plans_table(df)
