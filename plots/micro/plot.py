@@ -23,7 +23,7 @@ if __name__ == "__main__":
     heatmap_data.drop(rows_na, axis=0, inplace=True)
     heatmap_data.drop(cols_na, axis=1, inplace=True)
     ax = sns.heatmap(
-        heatmap_data, annot=True, cmap="BuPu", cbar=False, linewidths=0, fmt=".1f"
+        np.log2(heatmap_data), annot=True, cmap="coolwarm", cbar=False, linewidths=0, fmt=".1f", center=0
     )
 
     plt.gca().invert_yaxis()
