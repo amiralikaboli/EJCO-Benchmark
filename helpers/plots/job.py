@@ -26,7 +26,7 @@ def job_plot(df: pd.DataFrame, algo: Algo, vectorised: bool) -> None:
     df /= SECS_TO_MS
     df.drop(df.columns[-1], axis=1, inplace=True)
     eye_line = [np.min(df) / RATIO, np.max(df) * RATIO]
-    plt.plot(eye_line, eye_line, color="gray", lw=0.5)
+    plt.plot(eye_line, eye_line, color="lightgray", lw=0.5)
     x_values = df[df.columns[0]].values
     y_values = df[df.columns[1]].values
     plt.scatter(x_values, y_values, color="black", s=10, label=legend_str, zorder=3)
@@ -87,7 +87,7 @@ def violin_plot(df: pd.DataFrame) -> None:
     plt.plot(dfmat.columns, gmeans, color="dimgray")
     plt.scatter(dfmat.columns, gmeans, color="lightgray", zorder=3, s=20)
 
-    plt.ylabel("Performance Improvement (×)")
+    plt.ylabel("Speedup (×)")
     plt.grid(axis="y", linestyle="dotted")
 
     plt.savefig(JOB_PLOTS_PATH / "violin.pdf", bbox_inches="tight")
@@ -133,8 +133,8 @@ def job_sorting_plot(
         if sorting == Sorting.SORTING:
             raise ValueError("Pure sorting not supported for GJ")
 
-    if sorting == sorting.SORTING and vectorized:
-        raise ValueError()
+    # if sorting == sorting.SORTING and vectorized:
+    #     raise ValueError()
 
     plt.figure(figsize=(3, 3))
 
@@ -158,7 +158,7 @@ def job_sorting_plot(
     df = df[[theirs, ours]]
     df /= SECS_TO_MS
     eye_line = [np.min(df) / RATIO, np.max(df) * RATIO]
-    plt.plot(eye_line, eye_line, color="gray", lw=0.5)
+    plt.plot(eye_line, eye_line, color="lightgray", lw=0.5)
     x_values = df[df.columns[0]].values
     y_values = df[df.columns[1]].values
     plt.scatter(x_values, y_values, color="black", label=label, s=10, zorder=3)

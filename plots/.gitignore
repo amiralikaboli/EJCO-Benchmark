@@ -2,3 +2,6 @@
 
 !.gitignore
 !micro
+!tpch
+!tpch/plot.py
+!tpch/results.csv
