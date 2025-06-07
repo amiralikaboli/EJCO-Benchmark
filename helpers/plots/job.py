@@ -75,11 +75,11 @@ def job_fj_plot(df: pd.DataFrame) -> None:
 
 
 def violin_plot(df: pd.DataFrame) -> None:
-    plt.figure(figsize=(6, 3))
+    plt.figure(figsize=(6, 3.5))
 
-    mat = df[["O0", "O1", "O2", "O3", "O4", "FJ", "FJ (vector)"]].astype(int).to_numpy()
+    mat = df[["O0", "O1", "O2", "O3", "FJ", "FJ (vector)"]].astype(int).to_numpy()
     mat = 1 / (mat[:, :-1] / mat[:, -1][:, np.newaxis])
-    dfmat = pd.DataFrame(mat, columns=["Naive", "O1", "O2", "O3", "O4", "O5"])
+    dfmat = pd.DataFrame(mat, columns=["Naive", "O1", "O2", "O3", "O4"])
     gmeans = np.array([scipy.stats.gmean(dfmat[col]) for col in dfmat.columns])
 
     sns.violinplot(data=dfmat, color="0.8")
@@ -97,17 +97,24 @@ def ablation_plot(tdf: pd.DataFrame, queries: List[str]) -> None:
     fig, axes = plt.subplots(nrows=2, ncols=2)
     fig.set_size_inches(5, 4)
     axes = axes.ravel()
-    assert len(queries) == len(axes)
+    assert len(queries) == len(axes) - 1
     tdf = tdf.reset_index()
     for query, ax in zip(queries, axes):
         df = tdf[tdf[QUERY_COL] == query]
-        df = df[[QUERY_COL, "O0", "O1", "O2", "O3", "O4", "FJ"]]
-        df.columns = [QUERY_COL, "Naive", "O1", "O2", "O3", "O4", "O5"]
+        df = df[[QUERY_COL, "O0", "O1", "O2", "O3", "FJ"]]
+        df.columns = [QUERY_COL, "Naive", "O1", "O2", "O3", "O4"]
         df.plot.bar(ax=ax, legend=None, zorder=3)
-        lines, labels = ax.get_legend_handles_labels()
         ax.set_xticklabels([query], rotation=0)
         ax.grid(axis="y", linestyle="dotted")
         ax.yaxis.set_major_locator(MaxNLocator(nbins=5))
+
+    ax = axes[-1]
+    df = pd.DataFrame([[38041.6, 4553.2, 4491, 4488.4, 343.6]])
+    df.columns = ["Naive", "O1", "O2", "O3", "O4"]
+    df.plot.bar(logy=True, ax=ax, legend=None, zorder=3)
+    lines, labels = ax.get_legend_handles_labels()
+    ax.set_xticklabels(["LSQB Q1"], rotation=0)
+    ax.grid(axis="y", linestyle="dotted")
 
     plt.figlegend(
         lines,
@@ -125,7 +132,7 @@ def ablation_plot(tdf: pd.DataFrame, queries: List[str]) -> None:
 
 
 def job_sorting_plot(
-    df: pd.DataFrame, sorting: Sorting, algo: Algo, vectorized: bool = False
+        df: pd.DataFrame, sorting: Sorting, algo: Algo, vectorized: bool = False
 ) -> None:
     if algo == Algo.GJ:
         if vectorized:
@@ -151,7 +158,7 @@ def job_sorting_plot(
         label = "Sort-based"
     elif sorting == sorting.HYBRID:
         if algo == Algo.FJ:
-            label = f"Free Join{'\nw/o vectorization' if not vectorized else ''}"
+            label = f"Free Join{' w/o vectorization' if not vectorized else ''}"
         else:
             label = "Generic Join"
 

@@ -38,7 +38,7 @@ def compare(specs_fields: set[str]) -> Callable[[RecSpecType, RecSpecType], bool
 
 def categorise(
     specs_fields: set[str],
-) -> Callable[[list[RecType], *tuple[RecSpecType, ...]], list[list[RecType]]]:
+):
     def _categorise(records: list[RecType], *specs: RecSpecType) -> list[list[RecType]]:
         categorised = [[] for _ in specs]
 
@@ -71,5 +71,5 @@ def to_series(record: RecordMean) -> pd.Series:
 
 def to_frame(records: list[RecordMean]) -> pd.DataFrame:
     df = pd.DataFrame(to_series(record) for record in records)
-    df["time"] = df["time"].astype(int)
+    df["time"] = df["time"].astype(float)
     return df.rename(columns={"query": QUERY_COL, "time": RUNTIME_COL})

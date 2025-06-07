@@ -28,7 +28,7 @@ def job_plots() -> None:
 
     job_fj_plot(df)
     violin_plot(df)
-    ablation_plot(df, ["9d", "12b", "16b", "19d"])
+    ablation_plot(df, ["9d", "16b", "19d"])
 
     job_sorting_plot(df, Sorting.SORTING, Algo.FJ, vectorized=True)
     job_sorting_plot(df, Sorting.HYBRID, Algo.FJ)
