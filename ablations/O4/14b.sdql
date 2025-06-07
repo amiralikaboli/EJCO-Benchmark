@@ -7,8 +7,6 @@ let k = load[<id: @vec {int -> int}, keyword: @vec {int -> string}, phonetic_cod
 let it2 = load[<id: @vec {int -> int}, info: @vec {int -> string}, size: int>]("datasets/job/14b/it2.csv")
 let it1 = load[<id: @vec {int -> int}, info: @vec {int -> string}, size: int>]("datasets/job/14b/it1.csv")
 
-timer
-
 let t_trie0 = sum(<i, _> <- range(t.size)) @phmap(t.size) { t.id(i) -> @smallvecdict(4) { i -> 1 } } in
 let mi_idx_trie0 = sum(<i, _> <- range(mi_idx.size)) @phmap(mi_idx.size) { mi_idx.movie_id(i) -> @smallvecdict(4) { i -> 1 } } in
 let interm0_trie0 = sum(<mk_off, _> <- range(mk.size))
@@ -43,5 +41,6 @@ sum(<mi_off, _> <- range(mi.size))
 						let x4 = mi.info_type_id(mi_off) in
 						if (x4 ∈ it1_trie0) then
 							let it1_trie1 = it1_trie0(x4) in
-							promote[min_sum](<col5=interm0_tuple.col2, col6=interm0_tuple.col5>)
+							let mn_interm0 = <col2=interm0_tuple.col2, col5=interm0_tuple.col5> in
+							promote[min_sum](<col5=mn_interm0.col2, col6=mn_interm0.col5>)
 

@@ -4,8 +4,6 @@ let mc = load[<id: @vec {int -> int}, movie_id: @vec {int -> int}, company_id: @
 let it = load[<id: @vec {int -> int}, info: @vec {int -> string}, size: int>]("datasets/job/info_type.csv")
 let ct = load[<id: @vec {int -> int}, kind: @vec {int -> string}, size: int>]("datasets/job/5c/ct.csv")
 
-timer
-
 let it_trie0 = sum(<i, _> <- range(it.size)) @phmap(it.size) { it.id(i) ->  { i -> 1 } } in
 let mc_trie0 = sum(<i, _> <- range(mc.size)) @phmap(mc.size) { mc.movie_id(i) ->  { i -> 1 } } in
 let t_trie0 = sum(<i, _> <- range(t.size)) @phmap(t.size) { t.id(i) ->  { i -> 1 } } in
@@ -27,6 +25,10 @@ let interm0_trie0 = sum(<mi_off, _> <- range(mi.size))
 							 { <col0=mi.movie_id(mi_off), col1=mi.info_type_id(mi_off), col2=t.title(t_off), col3=mc.company_type_id(mc_off)> -> 1 }
 in
 
-sum(<interm0_tuple, _> <- interm0_trie0)
-	promote[min_sum](<col0=interm0_tuple.col2>)
+let res = sum(<interm0_tuple, _> <- interm0_trie0)
+	{ <col0=interm0_tuple.col2> -> 1 }
+in
+
+sum(<tpl, _> <- res)
+	promote[min_sum](<col0=tpl.col0>)
 

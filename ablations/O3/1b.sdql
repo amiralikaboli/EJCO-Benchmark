@@ -4,8 +4,6 @@ let mc = load[<id: @vec {int -> int}, movie_id: @vec {int -> int}, company_id: @
 let it = load[<id: @vec {int -> int}, info: @vec {int -> string}, size: int>]("datasets/job/1b/it.csv")
 let ct = load[<id: @vec {int -> int}, kind: @vec {int -> string}, size: int>]("datasets/job/1b/ct.csv")
 
-timer
-
 let mi_idx_trie0 = sum(<i, _> <- range(mi_idx.size)) @phmap(mi_idx.size) { mi_idx.movie_id(i) -> @smallvecdict(4) { i -> 1 } } in
 let interm0_trie0 = sum(<t_off, _> <- range(t.size))
 	let x0 = t.id(t_off) in
@@ -15,9 +13,9 @@ let interm0_trie0 = sum(<t_off, _> <- range(t.size))
 			@phmap(promote[min_sum](1000000) + promote[min_sum](t.size)) { t.id(t_off) -> @smallvecdict(4) { <col1=t.title(t_off), col2=t.production_year(t_off), col3=mi_idx.info_type_id(mi_idx_off)> -> 1 } }
 in
 
-let it_trie0 = sum(<i, _> <- range(it.size)) @phmap(it.size) { it.id(i) -> @smallvecdict(4) { i -> 1 } } in
-let ct_trie0 = sum(<i, _> <- range(ct.size)) @phmap(ct.size) { ct.id(i) -> @smallvecdict(4) { i -> 1 } } in
-sum(<mc_off, _> <- range(mc.size))
+let it_trie0 = sum(<i, _> <- range(it.size)) @phmap(it.size) { unique(it.id(i)) -> 1 } in
+let ct_trie0 = sum(<i, _> <- range(ct.size)) @phmap(ct.size) { unique(ct.id(i)) -> 1 } in
+let res = sum(<mc_off, _> <- range(mc.size))
 	let x0 = mc.movie_id(mc_off) in
 	if (x0 ∈ interm0_trie0) then
 		let interm0_trie1 = interm0_trie0(x0) in
@@ -28,5 +26,9 @@ sum(<mc_off, _> <- range(mc.size))
 				let x2 = mc.company_type_id(mc_off) in
 				if (x2 ∈ ct_trie0) then
 					let ct_trie1 = ct_trie0(x2) in
-					promote[min_sum](<col2=mc.note(mc_off), col4=interm0_tuple.col1, col5=interm0_tuple.col2>)
+					{ <col2=mc.note(mc_off), col4=interm0_tuple.col1, col5=interm0_tuple.col2> -> 1 }
+in
+
+sum(<tpl, _> <- res)
+	promote[min_sum](<col2=tpl.col2, col4=tpl.col4, col5=tpl.col5>)
 

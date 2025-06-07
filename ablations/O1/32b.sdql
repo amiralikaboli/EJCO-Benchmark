@@ -5,8 +5,6 @@ let mk = load[<id: @vec {int -> int}, movie_id: @vec {int -> int}, keyword_id: @
 let lt = load[<id: @vec {int -> int}, link: @vec {int -> string}, size: int>]("datasets/job/link_type.csv")
 let k = load[<id: @vec {int -> int}, keyword: @vec {int -> string}, phonetic_code: @vec {int -> string}, size: int>]("datasets/job/32b/k.csv")
 
-timer
-
 let ml_trie0 = sum(<i, _> <- range(ml.size)) @phmap(ml.size) { ml.movie_id(i) -> @smallvecdict(0) { i -> 1 } } in
 let t2_trie0 = sum(<i, _> <- range(t2.size)) @phmap(t2.size) { t2.id(i) -> @smallvecdict(0) { i -> 1 } } in
 let interm0_trie0 = sum(<t1_off, _> <- range(t1.size))
@@ -38,6 +36,10 @@ let interm1_trie0 = sum(<mk_off, _> <- range(mk.size))
 						@smallvecdict(0) { <col0=mk.movie_id(mk_off), col1=mk.keyword_id(mk_off), col2=interm0_tuple.col3, col3=interm0_tuple.col1, col4=interm0_tuple.col2, col5=interm0_tuple.col4, col6=lt.link(lt_off)> -> 1 }
 in
 
-sum(<interm1_tuple, _> <- interm1_trie0)
-	promote[min_sum](<col0=interm1_tuple.col3, col1=interm1_tuple.col5, col2=interm1_tuple.col6>)
+let res = sum(<interm1_tuple, _> <- interm1_trie0)
+	{ <col0=interm1_tuple.col3, col1=interm1_tuple.col5, col2=interm1_tuple.col6> -> 1 }
+in
+
+sum(<tpl, _> <- res)
+	promote[min_sum](<col0=tpl.col0, col1=tpl.col1, col2=tpl.col2>)
 

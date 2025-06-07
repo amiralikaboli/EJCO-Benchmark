@@ -13,8 +13,6 @@ let cn1 = load[<id: @vec {int -> int}, name: @vec {int -> string}, country_code:
 let mc2 = load[<id: @vec {int -> int}, movie_id: @vec {int -> int}, company_id: @vec {int -> int}, company_type_id: @vec {int -> int}, note: @vec {int -> string}, size: int>]("datasets/job/movie_companies.csv")
 let cn2 = load[<id: @vec {int -> int}, name: @vec {int -> string}, country_code: @vec {int -> string}, imdb_id: @vec {int -> string}, name_pcode_nf: @vec {int -> string}, name_pcode_sf: @vec {int -> string}, md5sum: @vec {int -> string}, size: int>]("datasets/job/company_name.csv")
 
-timer
-
 let lt_trie0 = sum(<i, _> <- range(lt.size)) @phmap(lt.size) { unique(lt.id(i)) -> 1 } in
 let interm0_trie0 = sum(<ml_off, _> <- range(ml.size))
 	let x0 = ml.link_type_id(ml_off) in
@@ -92,7 +90,7 @@ sum(<mc2_off, _> <- range(mc2.size))
 		let x1 = mc2.company_id(mc2_off) in
 		if (x1 ∈ cn2_trie0) then
 			let cn2_trie1 = cn2_trie0(x1) in
-			sum(<cn2_off, _> <- cn2_trie1)
-				sum(<interm5_tuple, _> <- interm5_trie1)
-					promote[min_sum](<col2=cn2.name(cn2_off), col5=interm5_tuple.col2, col7=interm5_tuple.col5, col9=interm5_tuple.col7, col11=interm5_tuple.col9, col13=interm5_tuple.col11>)
+			let mn_cn2 = sum(<cn2_off, _> <- cn2_trie1) promote[min_sum](<name=cn2.name(cn2_off)>) in
+			let mn_interm5 = sum(<interm5_tuple, _> <- interm5_trie1) promote[min_sum](<col2=interm5_tuple.col2, col5=interm5_tuple.col5, col7=interm5_tuple.col7, col9=interm5_tuple.col9, col11=interm5_tuple.col11>) in
+			promote[min_sum](<col2=mn_cn2.name, col5=mn_interm5.col2, col7=mn_interm5.col5, col9=mn_interm5.col7, col11=mn_interm5.col9, col13=mn_interm5.col11>)
 

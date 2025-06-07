@@ -13,8 +13,6 @@ let cn1 = load[<id: @vec {int -> int}, name: @vec {int -> string}, country_code:
 let mc2 = load[<id: @vec {int -> int}, movie_id: @vec {int -> int}, company_id: @vec {int -> int}, company_type_id: @vec {int -> int}, note: @vec {int -> string}, size: int>]("datasets/job/movie_companies.csv")
 let cn2 = load[<id: @vec {int -> int}, name: @vec {int -> string}, country_code: @vec {int -> string}, imdb_id: @vec {int -> string}, name_pcode_nf: @vec {int -> string}, name_pcode_sf: @vec {int -> string}, md5sum: @vec {int -> string}, size: int>]("datasets/job/company_name.csv")
 
-timer
-
 let lt_trie0 = sum(<i, _> <- range(lt.size)) @phmap(lt.size) { lt.id(i) -> @smallvecdict(0) { i -> 1 } } in
 let interm0_trie0 = sum(<ml_off, _> <- range(ml.size))
 	let x0 = ml.link_type_id(ml_off) in
@@ -97,6 +95,10 @@ let interm6_trie0 = sum(<mc2_off, _> <- range(mc2.size))
 					@smallvecdict(0) { <col0=mc2.company_id(mc2_off), col1=mc2.movie_id(mc2_off), col2=cn2.name(cn2_off), col3=interm5_tuple.col0, col4=interm5_tuple.col1, col5=interm5_tuple.col2, col6=interm5_tuple.col3, col7=interm5_tuple.col5, col8=interm5_tuple.col6, col9=interm5_tuple.col7, col10=interm5_tuple.col8, col11=interm5_tuple.col9, col12=interm5_tuple.col10, col13=interm5_tuple.col11, col14=interm5_tuple.col12> -> 1 }
 in
 
-sum(<interm6_tuple, _> <- interm6_trie0)
-	promote[min_sum](<col0=interm6_tuple.col2, col1=interm6_tuple.col5, col2=interm6_tuple.col7, col3=interm6_tuple.col9, col4=interm6_tuple.col11, col5=interm6_tuple.col13>)
+let res = sum(<interm6_tuple, _> <- interm6_trie0)
+	{ <col0=interm6_tuple.col2, col1=interm6_tuple.col5, col2=interm6_tuple.col7, col3=interm6_tuple.col9, col4=interm6_tuple.col11, col5=interm6_tuple.col13> -> 1 }
+in
+
+sum(<tpl, _> <- res)
+	promote[min_sum](<col0=tpl.col0, col1=tpl.col1, col2=tpl.col2, col3=tpl.col3, col4=tpl.col4, col5=tpl.col5>)
 

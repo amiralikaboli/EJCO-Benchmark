@@ -4,8 +4,6 @@ let k = load[<id: @vec {int -> int}, keyword: @vec {int -> string}, phonetic_cod
 let ci = load[<id: @vec {int -> int}, person_id: @vec {int -> int}, movie_id: @vec {int -> int}, person_role_id: @vec {int -> int}, note: @vec {int -> string}, nr_order: @vec {int -> int}, role_id: @vec {int -> int}, size: int>]("datasets/job/cast_info.csv")
 let n = load[<id: @vec {int -> int}, name: @vec {int -> string}, imdb_index: @vec {int -> string}, imdb_id: @vec {int -> string}, gender: @vec {int -> string}, name_pcode_cf: @vec {int -> string}, name_pcode_nf: @vec {int -> string}, surname_pcode: @vec {int -> string}, md5sum: @vec {int -> string}, size: int>]("datasets/job/6e/n.csv")
 
-timer
-
 let k_trie0 = sum(<i, _> <- range(k.size)) @phmap(k.size) { k.id(i) ->  { i -> 1 } } in
 let t_trie0 = sum(<i, _> <- range(t.size)) @phmap(t.size) { t.id(i) ->  { i -> 1 } } in
 let interm0_trie0 = sum(<mk_off, _> <- range(mk.size))
@@ -33,6 +31,10 @@ let interm1_trie0 = sum(<ci_off, _> <- range(ci.size))
 					 { <col0=ci.person_id(ci_off), col1=ci.movie_id(ci_off), col2=n.name(n_off), col3=interm0_tuple.col1, col4=interm0_tuple.col2, col5=interm0_tuple.col3> -> 1 }
 in
 
-sum(<interm1_tuple, _> <- interm1_trie0)
-	promote[min_sum](<col0=interm1_tuple.col2, col1=interm1_tuple.col4, col2=interm1_tuple.col5>)
+let res = sum(<interm1_tuple, _> <- interm1_trie0)
+	{ <col0=interm1_tuple.col2, col1=interm1_tuple.col4, col2=interm1_tuple.col5> -> 1 }
+in
+
+sum(<tpl, _> <- res)
+	promote[min_sum](<col0=tpl.col0, col1=tpl.col1, col2=tpl.col2>)
 

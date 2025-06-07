@@ -3,8 +3,6 @@ let t = load[<id: @vec {int -> int}, title: @vec {int -> string}, imdb_index: @v
 let mi = load[<id: @vec {int -> int}, movie_id: @vec {int -> int}, info_type_id: @vec {int -> int}, info: @vec {int -> string}, note: @vec {int -> string}, size: int>]("datasets/job/3c/mi.csv")
 let k = load[<id: @vec {int -> int}, keyword: @vec {int -> string}, phonetic_code: @vec {int -> string}, size: int>]("datasets/job/3c/k.csv")
 
-timer
-
 let t_trie0 = sum(<i, _> <- range(t.size)) @phmap(t.size) { t.id(i) -> @smallvecdict(4) { i -> 1 } } in
 let interm0_trie0 = sum(<mk_off, _> <- range(mk.size))
 	let x0 = mk.movie_id(mk_off) in
@@ -23,5 +21,6 @@ sum(<mi_off, _> <- range(mi.size))
 			let x1 = interm0_tuple.col1 in
 			if (x1 ∈ k_trie0) then
 				let k_trie1 = k_trie0(x1) in
-				promote[min_sum](<col2=interm0_tuple.col2>)
+				let mn_interm0 = <col2=interm0_tuple.col2> in
+				promote[min_sum](<col2=mn_interm0.col2>)
 

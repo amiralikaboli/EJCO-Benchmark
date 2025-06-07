@@ -4,8 +4,6 @@ let mi_idx = load[<id: @vec {int -> int}, movie_id: @vec {int -> int}, info_type
 let k = load[<id: @vec {int -> int}, keyword: @vec {int -> string}, phonetic_code: @vec {int -> string}, size: int>]("datasets/job/4c/k.csv")
 let it = load[<id: @vec {int -> int}, info: @vec {int -> string}, size: int>]("datasets/job/4c/it.csv")
 
-timer
-
 let k_trie0 = sum(<i, _> <- range(k.size)) @phmap(k.size) { unique(k.id(i)) -> 1 } in
 let mi_idx_trie0 = sum(<i, _> <- range(mi_idx.size)) @phmap(mi_idx.size) { mi_idx.movie_id(i) -> @smallvecdict(4) { i -> 1 } } in
 let t_trie0 = sum(<i, _> <- range(t.size)) @phmap(t.size) { t.id(i) -> @smallvecdict(4) { i -> 1 } } in
@@ -23,6 +21,7 @@ sum(<mk_off, _> <- range(mk.size))
 					let x2 = mi_idx.info_type_id(mi_idx_off) in
 					if (x2 ∈ it_trie0) then
 						let it_trie1 = it_trie0(x2) in
-						sum(<t_off, _> <- t_trie1)
-							promote[min_sum](<col2=t.title(t_off), col4=mi_idx.info(mi_idx_off)>)
+						let mn_t = sum(<t_off, _> <- t_trie1) promote[min_sum](<title=t.title(t_off)>) in
+						let mn_mi_idx = <info=mi_idx.info(mi_idx_off)> in
+						promote[min_sum](<col2=mn_t.title, col4=mn_mi_idx.info>)
 

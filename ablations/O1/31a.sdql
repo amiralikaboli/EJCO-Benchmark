@@ -10,8 +10,6 @@ let cn = load[<id: @vec {int -> int}, name: @vec {int -> string}, country_code: 
 let ci = load[<id: @vec {int -> int}, person_id: @vec {int -> int}, movie_id: @vec {int -> int}, person_role_id: @vec {int -> int}, note: @vec {int -> string}, nr_order: @vec {int -> int}, role_id: @vec {int -> int}, size: int>]("datasets/job/31a/ci.csv")
 let n = load[<id: @vec {int -> int}, name: @vec {int -> string}, imdb_index: @vec {int -> string}, imdb_id: @vec {int -> string}, gender: @vec {int -> string}, name_pcode_cf: @vec {int -> string}, name_pcode_nf: @vec {int -> string}, surname_pcode: @vec {int -> string}, md5sum: @vec {int -> string}, size: int>]("datasets/job/31a/n.csv")
 
-timer
-
 let mi_idx_trie0 = sum(<i, _> <- range(mi_idx.size)) @phmap(mi_idx.size) { mi_idx.movie_id(i) -> @smallvecdict(0) { i -> 1 } } in
 let t_trie0 = sum(<i, _> <- range(t.size)) @phmap(t.size) { t.id(i) -> @smallvecdict(0) { i -> 1 } } in
 let interm0_trie0 = sum(<mk_off, _> <- range(mk.size))
@@ -66,6 +64,10 @@ let interm2_trie0 = sum(<ci_off, _> <- range(ci.size))
 					@smallvecdict(0) { <col0=ci.person_id(ci_off), col1=ci.movie_id(ci_off), col2=n.name(n_off), col3=interm1_tuple.col1, col4=interm1_tuple.col2, col5=interm1_tuple.col3, col6=interm1_tuple.col4, col7=interm1_tuple.col5, col8=interm1_tuple.col6, col9=interm1_tuple.col7> -> 1 }
 in
 
-sum(<interm2_tuple, _> <- interm2_trie0)
-	promote[min_sum](<col0=interm2_tuple.col2, col1=interm2_tuple.col4, col2=interm2_tuple.col7, col3=interm2_tuple.col8>)
+let res = sum(<interm2_tuple, _> <- interm2_trie0)
+	{ <col0=interm2_tuple.col2, col1=interm2_tuple.col4, col2=interm2_tuple.col7, col3=interm2_tuple.col8> -> 1 }
+in
+
+sum(<tpl, _> <- res)
+	promote[min_sum](<col0=tpl.col0, col1=tpl.col1, col2=tpl.col2, col3=tpl.col3>)
 
